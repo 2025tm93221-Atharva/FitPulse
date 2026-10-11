@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, require_roles
+from app.core.clock import business_today
 from app.core.database import get_db
 from app.models import Membership, User
 from app.schemas import MembershipCreate, MembershipRead, MembershipStatusUpdate
@@ -43,7 +44,7 @@ def create_membership(
     if not user.is_active:
         raise HTTPException(status_code=409, detail="Cannot create a membership for an inactive account")
     if payload.status == "active":
-        today = date.today()
+        today = business_today()
         if payload.start_date > today or payload.expiry_date < today:
             raise HTTPException(status_code=409, detail="Active membership dates must include today")
 
@@ -78,7 +79,6 @@ def get_membership(
     return membership
 
 
-
 @router.patch("/{membership_id}/status", response_model=MembershipRead)
 def update_membership_status(
     membership_id: int,
@@ -97,7 +97,7 @@ def update_membership_status(
             detail=f"Invalid membership status transition: {membership.status} -> {payload.status}",
         )
     if payload.status == "active":
-        today = date.today()
+        today = business_today()
         if membership.start_date > today or membership.expiry_date < today:
             raise HTTPException(status_code=409, detail="Membership dates do not allow activation today")
         overlap_id = db.scalar(select(Membership.id).where(
