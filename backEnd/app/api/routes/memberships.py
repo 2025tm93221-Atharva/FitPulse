@@ -79,3 +79,37 @@ def get_membership(
 
 
 
+@router.patch("/{membership_id}/status", response_model=MembershipRead)
+def update_membership_status(
+    membership_id: int,
+    payload: MembershipStatusUpdate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_roles("admin")),
+) -> Membership:
+    membership = db.get(Membership, membership_id)
+    if membership is None:
+        raise HTTPException(status_code=404, detail="Membership not found")
+    if payload.status == membership.status:
+        return membership
+    if payload.status not in ALLOWED_TRANSITIONS.get(membership.status, set()):
+        raise HTTPException(
+            status_code=409,
+            detail=f"Invalid membership status transition: {membership.status} -> {payload.status}",
+        )
+    if payload.status == "active":
+        today = date.today()
+        if membership.start_date > today or membership.expiry_date < today:
+            raise HTTPException(status_code=409, detail="Membership dates do not allow activation today")
+        overlap_id = db.scalar(select(Membership.id).where(
+            Membership.user_id == membership.user_id,
+            Membership.id != membership.id,
+            Membership.status.in_(["pending", "active", "frozen"]),
+            Membership.start_date <= membership.expiry_date,
+            Membership.expiry_date >= membership.start_date,
+        ).limit(1))
+        if overlap_id is not None:
+            raise HTTPException(status_code=409, detail="Member already has an overlapping active membership")
+    membership.status = payload.status
+    db.commit()
+    db.refresh(membership)
+    return membership
