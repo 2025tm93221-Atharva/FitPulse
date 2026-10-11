@@ -4,9 +4,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import models  # Register ORM models before create_all
-from api import health, memberships, users
-from core.config import settings
-from core.database import Base, engine
+from backEnd.app.api import memberships
+from backEnd.app.api import health, users
+from backEnd.app.core.config import settings
+from backEnd.app.core.database import Base, engine
 
 
 @asynccontextmanager
