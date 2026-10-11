@@ -25,7 +25,7 @@ def upgrade() -> None:
 
     op.execute("UPDATE users SET hashed_password = '' WHERE hashed_password IS NULL")
     op.execute("UPDATE users SET role = 'member' WHERE role IS NULL")
-    op.execute("UPDATE users SET is_active = 1 WHERE is_active IS NULL")
+    op.execute("UPDATE users SET is_active = true WHERE is_active IS NULL")
 
     with op.batch_alter_table("users") as batch_op:
         batch_op.alter_column("hashed_password", existing_type=sa.String(length=255), nullable=False)
