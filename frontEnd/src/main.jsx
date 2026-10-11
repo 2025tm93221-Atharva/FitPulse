@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import './styles.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000';
 
 async function apiFetch(path, options = {}, accessToken = null) {
   const headers = new Headers(options.headers || {});
@@ -28,7 +28,7 @@ async function apiFetch(path, options = {}, accessToken = null) {
   try {
     response = await fetch(`${API_BASE}${path}`, { ...options, headers });
   } catch {
-    throw new Error('API not reachable. Start FastAPI on port 8000 and check the CORS configuration.');
+    throw new Error('API not reachable. Check the network connection and API health endpoint.');
   }
 
   const data = await response.json().catch(() => ({}));
