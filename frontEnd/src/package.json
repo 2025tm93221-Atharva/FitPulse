@@ -1,0 +1,31 @@
+{
+  "name": "fitpulse-frontend",
+  "version": "1.0.0",
+  "description": "Responsive Web and Mobile UI for the FitPulse Fitness Membership Application, featuring dynamic digital pass, membership tier management, and class reservations.",
+  "keywords": [
+    "fitness-app",
+    "gym-membership",
+    "ui-template",
+    "tailwind-css",
+    "digital-pass",
+    "qr-checkin",
+    "class-booking",
+    "dashboard-ui",
+    "mobile-responsive"
+  ],
+  "homepage": "https://github.com/2025tm93221-Atharva/FitPulse#readme",
+  "bugs": {
+    "url": "https://github.com/2025tm93221-Atharva/FitPulse/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2025tm93221-Atharva/FitPulse.git"
+  },
+  "license": "ISC",
+  "author": "Atharva Kadam",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
