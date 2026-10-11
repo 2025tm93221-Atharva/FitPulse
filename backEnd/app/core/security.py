@@ -54,3 +54,33 @@ def create_checkin_token(user_id: int, membership_id: int) -> tuple[str, str, da
 
 def decode_token(token: str) -> dict[str, Any]:
     return jwt.decode(token, settings.secret_key, algorithms=[ALGORITHM])
+
+
+# Scanner keys are high-entropy opaque credentials. Only a SHA-256 digest of the
+# secret is stored; unlike human passwords, random scanner secrets are not guessable.
+def generate_scanner_api_key() -> tuple[str, str, str]:
+    import hashlib
+    import secrets
+
+    key_id = secrets.token_hex(8)
+    secret = secrets.token_urlsafe(32)
+    raw_key = f"fscan_{key_id}.{secret}"
+    key_hash = hashlib.sha256(secret.encode("utf-8")).hexdigest()
+    return key_id, raw_key, key_hash
+
+
+def parse_scanner_api_key(raw_key: str) -> tuple[str, str] | None:
+    if not raw_key or not raw_key.startswith("fscan_"):
+        return None
+    key_id, separator, secret = raw_key[6:].partition(".")
+    if not separator or len(key_id) != 16 or len(secret) < 32:
+        return None
+    if not all(char in "0123456789abcdef" for char in key_id.lower()):
+        return None
+    return key_id, secret
+
+
+def hash_scanner_secret(secret: str) -> str:
+    import hashlib
+
+    return hashlib.sha256(secret.encode("utf-8")).hexdigest()
