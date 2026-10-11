@@ -63,3 +63,19 @@ def create_membership(
     db.refresh(membership)
     return membership
 
+
+@router.get("/{membership_id}", response_model=MembershipRead)
+def get_membership(
+    membership_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Membership:
+    membership = db.get(Membership, membership_id)
+    if membership is None:
+        raise HTTPException(status_code=404, detail="Membership not found")
+    if current_user.role != "admin" and membership.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You cannot access another member's membership")
+    return membership
+
+
+
