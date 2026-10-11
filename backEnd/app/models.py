@@ -42,6 +42,23 @@ class Membership(Base):
     check_ins: Mapped[list["CheckIn"]] = relationship(back_populates="membership")
 
 
+class ScannerDevice(Base):
+    """A trusted physical scanner; the raw API key is never persisted."""
+
+    __tablename__ = "scanner_devices"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    location_name: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    key_id: Mapped[str] = mapped_column(String(24), unique=True, index=True, nullable=False)
+    key_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    check_ins: Mapped[list["CheckIn"]] = relationship(back_populates="scanner_device")
+
+
 class CheckIn(Base):
     __tablename__ = "check_ins"
 
@@ -55,6 +72,10 @@ class CheckIn(Base):
     result: Mapped[str] = mapped_column(String(20), nullable=False, default="accepted")
     # One-time QR tokens are recorded here to prevent replay. NULL is allowed for legacy/manual entries.
     qr_jti: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
+    scanner_device_id: Mapped[int | None] = mapped_column(
+        ForeignKey("scanner_devices.id", ondelete="SET NULL"), nullable=True, index=True
+    )
 
     user: Mapped["User"] = relationship(back_populates="check_ins")
     membership: Mapped["Membership | None"] = relationship(back_populates="check_ins")
+    scanner_device: Mapped["ScannerDevice | None"] = relationship(back_populates="check_ins")
