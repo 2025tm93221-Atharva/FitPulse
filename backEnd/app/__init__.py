@@ -1,0 +1,1 @@
+"""FitPulse backend application package."""
