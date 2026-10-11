@@ -1,0 +1,17 @@
+name: Staging image build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  compose-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare placeholder staging environment
+        run: cp .env.staging.example .env.staging
+      - name: Validate Compose configuration
+        run: docker compose --env-file .env.staging -f compose.staging.yml config --quiet
+      - name: Build staging images
+        run: docker compose --env-file .env.staging -f compose.staging.yml build
