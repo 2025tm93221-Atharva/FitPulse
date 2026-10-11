@@ -70,6 +70,11 @@ class QRTokenResponse(BaseModel):
     expires_at: datetime
 
 
+class ScannerQRRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    qr_token: str = Field(min_length=1, max_length=4096)
+
+
 class CheckInValidateRequest(BaseModel):
     qr_token: str = Field(min_length=1, max_length=4096)
     location_name: str = Field(min_length=1, max_length=120)
@@ -91,3 +96,4 @@ class CheckInRead(BaseModel):
     checked_in_at: datetime
     location_name: str | None
     result: str
+    scanner_device_id: int | None = None
