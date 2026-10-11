@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -13,6 +15,7 @@ class Settings(BaseSettings):
     secret_key: str = _DEVELOPMENT_SECRET
     access_token_expire_minutes: int = Field(default=30, ge=1, le=1440)
     qr_token_expire_seconds: int = Field(default=60, ge=10, le=300)
+    business_timezone: str = "UTC"
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -26,10 +29,18 @@ class Settings(BaseSettings):
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
     @model_validator(mode="after")
-    def validate_production_secrets(self):
-        if self.environment.lower() == "production":
-            if (self.secret_key == _DEVELOPMENT_SECRET or self.secret_key.lower().startswith("replace-this") or len(self.secret_key) < 32):
-                raise ValueError("Production requires a unique SECRET_KEY of at least 32 characters")
+    def validate_runtime_configuration(self):
+        try:
+            ZoneInfo(self.business_timezone)
+        except ZoneInfoNotFoundError as exc:
+            raise ValueError("BUSINESS_TIMEZONE must be a valid IANA timezone") from exc
+
+        environment = self.environment.lower()
+        if environment in {"staging", "production"}:
+            secret = self.secret_key
+            if secret == _DEVELOPMENT_SECRET or secret.lower().startswith(("replace-this", "change_me", "changeme")) or len(secret) < 32:
+                raise ValueError("Staging/production requires a unique SECRET_KEY of at least 32 characters")
+        if environment == "production":
             if "localhost" in self.cors_origins or "127.0.0.1" in self.cors_origins:
                 raise ValueError("Production CORS_ORIGINS must not include localhost origins")
         return self
