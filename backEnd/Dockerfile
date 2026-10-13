@@ -2,14 +2,12 @@ FROM python:3.14-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_VIRTUALENVS_CREATE=false
+    PIP_NO_CACHE_DIR=1
 
 WORKDIR /srv/backend
-COPY pyproject.toml poetry.lock ./
-RUN python -m pip install --upgrade pip poetry==2.5.1 \
-    && poetry install --only main --no-root \
-    && python -m pip install "uvicorn[standard]" "psycopg[binary]" \
+COPY requirements.txt ./
+RUN python -m pip install --upgrade pip \
+    && python -m pip install -r requirements.txt \
     && addgroup --system app && adduser --system --ingroup app app
 COPY app ./app
 COPY migrations ./migrations

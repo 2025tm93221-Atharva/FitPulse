@@ -44,16 +44,19 @@ pipeline {
                 dir('backEnd') {
                     sh '''
                         set -eu
-                        poetry install --no-interaction --sync
+                        python3.14 -m venv .venv
+                        .venv/bin/python -m pip install --upgrade pip
+                        .venv/bin/python -m pip install -r requirements.txt ruff==0.17.0
+                        export PATH="$PWD/.venv/bin:$PATH"
                         ruff check --select E4,E7,E9,F app migrations tests
-                        poetry run python -m compileall -q app migrations tests
-                        poetry run pytest -q
+                        python -m compileall -q app migrations tests
+                        pytest -q
 
                         migration_db="/tmp/fitpulse-jenkins-${BUILD_NUMBER}.db"
                         rm -f "$migration_db"
                         export DATABASE_URL="sqlite:////tmp/fitpulse-jenkins-${BUILD_NUMBER}.db"
-                        poetry run alembic upgrade head
-                        poetry run alembic check
+                        alembic upgrade head
+                        alembic check
                     '''
                 }
             }
