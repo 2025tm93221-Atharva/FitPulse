@@ -14,6 +14,9 @@ def test_staging_accepts_unique_secret_and_iana_timezone():
         environment="staging",
         secret_key="a-test-only-random-secret-long-enough-for-staging-123456789",
         business_timezone="Asia/Kolkata",
+        mail_backend="smtp",
+        mail_from="FitPulse Test <test@example.com>",
+        smtp_host="smtp.example.com",
     )
     assert settings.business_timezone == "Asia/Kolkata"
 
@@ -29,4 +32,8 @@ def test_production_rejects_local_cors_origin():
             environment="production",
             secret_key="a-production-secret-that-is-long-enough-and-not-default-123",
             cors_origins="https://fitness.example.com,http://localhost:5173",
+            public_app_url="https://fitness.example.com",
+            mail_backend="smtp",
+            mail_from="FitPulse Test <test@example.com>",
+            smtp_host="smtp.example.com",
         )
