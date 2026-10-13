@@ -1,4 +1,3 @@
-
 from datetime import date, datetime, timedelta, timezone
 
 import jwt
@@ -68,7 +67,7 @@ def test_frozen_membership_cannot_get_qr(client, member_account, admin_account):
     create_active_membership(client, member_account, admin_account, status="pending")
     response = client.patch("/api/memberships/1/status", headers=auth(admin_account["token"]), json={"status": "active"})
     assert response.status_code == 200
-    response = client.patch("/api/memberships/1/status", headers=auth(admin_account["token"]), json={"status": "frozen"})
+    response = client.post("/api/memberships/1/freeze", headers=auth(admin_account["token"]), json={"days": 1})
     assert response.status_code == 200
     qr = client.post("/api/check-ins/qr-token", headers=auth(member_account["token"]))
     assert qr.status_code == 403

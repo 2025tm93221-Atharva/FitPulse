@@ -31,11 +31,12 @@ def get_current_user(
         if payload.get("token_type") != "access":
             raise unauthorized
         user_id = int(payload["sub"])
+        token_version = int(payload.get("token_version", 0))
     except (jwt.PyJWTError, KeyError, TypeError, ValueError):
         raise unauthorized
 
     user = db.get(User, user_id)
-    if user is None or not user.is_active:
+    if user is None or not user.is_active or user.token_version != token_version:
         raise unauthorized
     return user
 

@@ -129,10 +129,10 @@ def test_scanner_cannot_use_pass_after_membership_frozen(
     membership = create_active_membership(client, member_account, admin_account)
     _, key = create_scanner(db_session)
     qr = issue_qr(client, member_account)
-    frozen = client.patch(
-        f"/api/memberships/{membership['id']}/status",
+    frozen = client.post(
+        f"/api/memberships/{membership['id']}/freeze",
         headers=auth(admin_account["token"]),
-        json={"status": "frozen"},
+        json={"days": 1},
     )
     assert frozen.status_code == 200
     response = client.post("/api/scanner/check-ins/validate", headers={"X-Scanner-Key": key}, json={"qr_token": qr})

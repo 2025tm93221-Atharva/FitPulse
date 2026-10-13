@@ -3,14 +3,25 @@ import { createRoot } from 'react-dom/client';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   Activity,
+  Bell,
   CalendarDays,
+  Clock3,
+  MapPin,
+  Users,
+  TicketCheck,
+  Timer,
   CheckCircle2,
+  CircleHelp,
   CreditCard,
   Dumbbell,
   KeyRound,
   LoaderCircle,
   LogOut,
+  Mail,
   RefreshCw,
+  Save,
+  Send,
+  Settings,
   ShieldCheck,
   UserRound,
   XCircle,
@@ -61,6 +72,38 @@ function formatTimestamp(value) {
   });
 }
 
+
+function localDateTimeInput(value) {
+  const date = new Date(value);
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return local.toISOString().slice(0, 16);
+}
+
+function defaultClassForm() {
+  const starts = new Date(Date.now() + 48 * 60 * 60 * 1000);
+  starts.setMinutes(0, 0, 0);
+  const ends = new Date(starts.getTime() + 50 * 60_000);
+  return {
+    title: '', description: '', instructor_name: '', class_type: 'Strength', location_name: 'Downtown Club',
+    starts_at: localDateTimeInput(starts), ends_at: localDateTimeInput(ends), capacity: '20', waitlist_limit: '10',
+    cancellation_cutoff_minutes: '120',
+  };
+}
+
+function formatClassDateTime(value) {
+  if (!value) return 'Time to be confirmed';
+  return new Date(value).toLocaleString(undefined, {
+    weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+  });
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = window.atob(base64);
+  return Uint8Array.from([...raw].map((character) => character.charCodeAt(0)));
+}
+
 function membershipDisplayStatus(membership, today) {
   if (membership.status === 'active' && membership.expiry_date < today) return 'Expired';
   if (membership.status === 'active' && membership.start_date > today) return 'Scheduled';
@@ -68,11 +111,31 @@ function membershipDisplayStatus(membership, today) {
 }
 
 function App() {
-  const [mode, setMode] = useState('login');
+  const initialResetToken = new URLSearchParams(window.location.search).get('reset_token') || '';
+  const [mode, setMode] = useState(initialResetToken ? 'reset' : 'login');
   const [form, setForm] = useState({ email: '', password: '', full_name: '' });
+  const [resetToken, setResetToken] = useState(initialResetToken);
+  const [newPassword, setNewPassword] = useState('');
+  const [profileName, setProfileName] = useState('');
+  const [privacy, setPrivacy] = useState({ analytics_consent: false, marketing_consent: false });
+  const [notifications, setNotifications] = useState([]);
+  const [supportTickets, setSupportTickets] = useState([]);
+  const [supportForm, setSupportForm] = useState({ category: 'access', subject: '', message: '' });
   const [session, setSession] = useState(null);
   const [memberships, setMemberships] = useState([]);
   const [checkIns, setCheckIns] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [renewalRequests, setRenewalRequests] = useState([]);
+  const [classSearch, setClassSearch] = useState('');
+  const [classTypeFilter, setClassTypeFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [classForm, setClassForm] = useState(defaultClassForm);
+  const [renewalDays, setRenewalDays] = useState('365');
+  const [freezeDays, setFreezeDays] = useState('7');
+  const [pushConfig, setPushConfig] = useState({ enabled: false, public_key: null });
+  const [pushSubscriptionId, setPushSubscriptionId] = useState(null);
+  const [pushState, setPushState] = useState('not_enabled');
   const [pass, setPass] = useState(null);
   const [busy, setBusy] = useState(false);
   const [passBusy, setPassBusy] = useState(false);
@@ -95,6 +158,13 @@ function App() {
   }, [checkIns]);
   const latestCheckIn = checkIns[0] || null;
   const passExpired = pass ? Date.now() >= Date.parse(pass.expires_at) : false;
+  const unreadNotifications = notifications.filter((item) => !item.is_read).length;
+  const filteredClasses = useMemo(() => classes.filter((item) => {
+    const text = `${item.title} ${item.instructor_name} ${item.description}`.toLowerCase();
+    return (!classSearch || text.includes(classSearch.toLowerCase()))
+      && (classTypeFilter === 'all' || item.class_type.toLowerCase() === classTypeFilter.toLowerCase())
+      && (!locationFilter || item.location_name.toLowerCase().includes(locationFilter.toLowerCase()));
+  }), [classes, classSearch, classTypeFilter, locationFilter]);
 
   useEffect(() => {
     if (!pass) return undefined;
@@ -115,13 +185,35 @@ function App() {
 
   useEffect(() => { checkApi(); }, []);
 
-  async function loadDashboard(accessToken) {
-    const [membershipData, checkInData] = await Promise.all([
+  async function loadDashboard(accessToken, role = 'member') {
+    const renewalPath = role === 'admin' || role === 'staff'
+      ? '/api/memberships/renewals?status_filter=pending'
+      : '/api/memberships/renewals/me';
+    const [membershipData, checkInData, notificationData, privacyData, ticketData, profileData, classData, bookingData, renewalData, pushKeyData, pushSubData] = await Promise.all([
       apiFetch('/api/memberships/me', {}, accessToken),
       apiFetch('/api/check-ins/me', {}, accessToken),
+      apiFetch('/api/notifications/me', {}, accessToken),
+      apiFetch('/api/privacy/preferences', {}, accessToken),
+      apiFetch('/api/support/tickets/me', {}, accessToken),
+      apiFetch('/api/users/me', {}, accessToken),
+      apiFetch('/api/classes', {}, accessToken),
+      apiFetch('/api/bookings/me', {}, accessToken),
+      apiFetch(renewalPath, {}, accessToken),
+      apiFetch('/api/notifications/push/public-key', {}, accessToken),
+      apiFetch('/api/notifications/push/subscriptions/me', {}, accessToken),
     ]);
     setMemberships(membershipData);
     setCheckIns(checkInData);
+    setNotifications(notificationData);
+    setPrivacy({ analytics_consent: privacyData.analytics_consent, marketing_consent: privacyData.marketing_consent });
+    setSupportTickets(ticketData);
+    setProfileName(profileData.full_name);
+    setClasses(classData);
+    setBookings(bookingData);
+    setRenewalRequests(renewalData);
+    setPushConfig(pushKeyData);
+    setPushSubscriptionId(pushSubData.length ? pushSubData[0].id : null);
+    setPushState(pushSubData.length ? 'enabled' : 'not_enabled');
   }
 
   async function submitAuth(event) {
@@ -138,12 +230,32 @@ function App() {
         setMode('login');
         setForm((previous) => ({ ...previous, password: '' }));
         setNotice('Account created. Sign in, then contact your club to have a membership assigned.');
+      } else if (mode === 'forgot') {
+        const result = await apiFetch('/api/auth/password-reset/request', {
+          method: 'POST', body: JSON.stringify({ email: form.email }),
+        });
+        setNotice(result.message || 'If an active account exists for this email, password-reset instructions will be sent.');
+        if (result.debug_reset_token) {
+          setResetToken(result.debug_reset_token);
+          setMode('reset');
+          setNotice('Development reset token created. Choose a new password to finish account recovery.');
+        }
+      } else if (mode === 'reset') {
+        await apiFetch('/api/auth/password-reset/confirm', {
+          method: 'POST', body: JSON.stringify({ token: resetToken, new_password: newPassword }),
+        });
+        window.history.replaceState({}, document.title, window.location.pathname);
+        setMode('login');
+        setResetToken('');
+        setNewPassword('');
+        setForm((previous) => ({ ...previous, password: '' }));
+        setNotice('Password reset complete. Sign in with your new password. Existing sessions have been revoked.');
       } else {
         const result = await apiFetch('/api/auth/login', {
           method: 'POST',
           body: JSON.stringify({ email: form.email, password: form.password }),
         });
-        await loadDashboard(result.access_token);
+        await loadDashboard(result.access_token, result.user.role);
         // Keep the bearer token in memory only; never persist it to localStorage.
         setSession({ accessToken: result.access_token, user: result.user });
         setPass(null);
@@ -154,6 +266,72 @@ function App() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function saveProfile(event) {
+    event.preventDefault();
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const updated = await apiFetch('/api/users/me', {
+        method: 'PATCH', body: JSON.stringify({ full_name: profileName }),
+      }, session.accessToken);
+      setSession((previous) => ({ ...previous, user: updated }));
+      setProfileName(updated.full_name);
+      setNotice('Profile details saved.');
+    } catch (requestError) {
+      setError(requestError.message || 'Could not update profile.');
+    } finally { setBusy(false); }
+  }
+
+  async function savePrivacy(event) {
+    event.preventDefault();
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const saved = await apiFetch('/api/privacy/preferences', {
+        method: 'PATCH', body: JSON.stringify(privacy),
+      }, session.accessToken);
+      setPrivacy({ analytics_consent: saved.analytics_consent, marketing_consent: saved.marketing_consent });
+      setNotice('Privacy preferences saved. Essential membership and security processing remains enabled.');
+    } catch (requestError) {
+      setError(requestError.message || 'Could not save privacy preferences.');
+    } finally { setBusy(false); }
+  }
+
+  async function markNotificationRead(notificationId) {
+    if (!session) return;
+    try {
+      const updated = await apiFetch(`/api/notifications/${notificationId}/read`, { method: 'PATCH' }, session.accessToken);
+      setNotifications((previous) => previous.map((item) => item.id === updated.id ? updated : item));
+    } catch (requestError) { setError(requestError.message || 'Could not update notification.'); }
+  }
+
+  async function markAllNotificationsRead() {
+    if (!session) return;
+    try {
+      await apiFetch('/api/notifications/me/read-all', { method: 'POST' }, session.accessToken);
+      setNotifications((previous) => previous.map((item) => ({ ...item, is_read: true })));
+      setNotice('All notifications marked as read.');
+    } catch (requestError) { setError(requestError.message || 'Could not update notifications.'); }
+  }
+
+  async function submitSupportTicket(event) {
+    event.preventDefault();
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const ticket = await apiFetch('/api/support/tickets', {
+        method: 'POST', body: JSON.stringify(supportForm),
+      }, session.accessToken);
+      setSupportTickets((previous) => [ticket, ...previous]);
+      setSupportForm({ category: 'access', subject: '', message: '' });
+      const notificationData = await apiFetch('/api/notifications/me', {}, session.accessToken);
+      setNotifications(notificationData);
+      setNotice(`Support request #${ticket.id} submitted. Track updates in this dashboard.`);
+    } catch (requestError) {
+      setError(requestError.message || 'Could not submit your support request.');
+    } finally { setBusy(false); }
   }
 
   async function generatePass() {
@@ -176,18 +354,204 @@ function App() {
     if (!session) return;
     setError('');
     try {
-      await loadDashboard(session.accessToken);
+      await loadDashboard(session.accessToken, session.user.role);
       setNotice('Membership and check-in information refreshed.');
     } catch (requestError) {
       setError(requestError.message || 'Could not refresh account information.');
     }
   }
 
-  function signOut() {
+  async function bookClass(classId) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const booking = await apiFetch(`/api/classes/${classId}/bookings`, { method: 'POST' }, session.accessToken);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice(booking.status === 'waitlisted' ? `Added to the waitlist at position ${booking.waitlist_position}.` : 'Your class spot is confirmed.');
+    } catch (requestError) {
+      setError(requestError.message || 'Could not book this class.');
+    } finally { setBusy(false); }
+  }
+
+  async function cancelBooking(bookingId) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const result = await apiFetch(`/api/bookings/${bookingId}/cancel`, { method: 'POST' }, session.accessToken);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice(result.status === 'cancelled' ? 'Booking cancelled. If you held a confirmed spot, the next eligible waitlisted member may be promoted.' : 'Booking updated.');
+    } catch (requestError) {
+      setError(requestError.message || 'Could not cancel this booking.');
+    } finally { setBusy(false); }
+  }
+
+  async function createClassSchedule(event) {
+    event.preventDefault();
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const payload = {
+        ...classForm,
+        starts_at: new Date(classForm.starts_at).toISOString(),
+        ends_at: new Date(classForm.ends_at).toISOString(),
+        capacity: Number(classForm.capacity),
+        waitlist_limit: Number(classForm.waitlist_limit),
+        cancellation_cutoff_minutes: Number(classForm.cancellation_cutoff_minutes),
+      };
+      const created = await apiFetch('/api/classes', { method: 'POST', body: JSON.stringify(payload) }, session.accessToken);
+      setClassForm(defaultClassForm());
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice(`${created.title} has been added to the class schedule.`);
+    } catch (requestError) {
+      setError(requestError.message || 'Could not create class.');
+    } finally { setBusy(false); }
+  }
+
+  async function cancelScheduledClass(classId) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      await apiFetch(`/api/classes/${classId}`, { method: 'PATCH', body: JSON.stringify({ status: 'cancelled' }) }, session.accessToken);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice('Class cancelled. Booked members have been notified in-app. Publish a new session if another time is available.');
+    } catch (requestError) {
+      setError(requestError.message || 'Could not cancel class.');
+    } finally { setBusy(false); }
+  }
+
+  async function requestRenewal(membershipId) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      const request = await apiFetch(`/api/memberships/${membershipId}/renew`, {
+        method: 'POST', body: JSON.stringify({ renewal_days: Number(renewalDays) }),
+      }, session.accessToken);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice(`Renewal request #${request.id} submitted. The club must confirm it; no payment has been taken.`);
+    } catch (requestError) {
+      setError(requestError.message || 'Could not request renewal.');
+    } finally { setBusy(false); }
+  }
+
+  async function cancelRenewalRequest(requestId) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      await apiFetch(`/api/memberships/renewals/${requestId}/cancel`, { method: 'POST' }, session.accessToken);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice('Pending renewal request cancelled.');
+    } catch (requestError) { setError(requestError.message || 'Could not cancel renewal request.'); }
+    finally { setBusy(false); }
+  }
+
+  async function reviewRenewalRequest(requestId, status) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      await apiFetch(`/api/memberships/renewals/${requestId}`, { method: 'PATCH', body: JSON.stringify({ status }) }, session.accessToken);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice(`Renewal request ${status}.`);
+    } catch (requestError) { setError(requestError.message || 'Could not review renewal request.'); }
+    finally { setBusy(false); }
+  }
+
+  async function freezeMembership(membershipId) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      await apiFetch(`/api/memberships/${membershipId}/freeze`, { method: 'POST', body: JSON.stringify({ days: Number(freezeDays) }) }, session.accessToken);
+      setPass(null);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice(`Membership frozen for up to ${freezeDays} days. QR entry is disabled while frozen.`);
+    } catch (requestError) { setError(requestError.message || 'Could not freeze membership.'); }
+    finally { setBusy(false); }
+  }
+
+  async function resumeMembership(membershipId) {
+    if (!session) return;
+    setBusy(true); setError(''); setNotice('');
+    try {
+      await apiFetch(`/api/memberships/${membershipId}/resume`, { method: 'POST' }, session.accessToken);
+      setPass(null);
+      await loadDashboard(session.accessToken, session.user.role);
+      setNotice('Membership resumed. Generate a fresh digital pass before check-in.');
+    } catch (requestError) { setError(requestError.message || 'Could not resume membership.'); }
+    finally { setBusy(false); }
+  }
+
+  async function enablePushNotifications() {
+    if (!session) return;
+    setError(''); setNotice('');
+    if (!pushConfig.enabled || !pushConfig.public_key) {
+      setNotice('Browser push is not configured on this server. In-app class reminders will still work; configure VAPID keys to enable background push.');
+      return;
+    }
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+      setNotice('This browser does not support Web Push. In-app reminders remain available.');
+      return;
+    }
+    try {
+      const permission = await window.Notification.requestPermission();
+      if (permission !== 'granted') {
+        setNotice('Browser notifications were not enabled. You can change this permission in browser settings.');
+        return;
+      }
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      const subscription = await registration.pushManager.getSubscription() || await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(pushConfig.public_key),
+      });
+      const serialized = subscription.toJSON();
+      const saved = await apiFetch('/api/notifications/push/subscriptions', {
+        method: 'POST',
+        body: JSON.stringify({ endpoint: serialized.endpoint, p256dh: serialized.keys?.p256dh, auth: serialized.keys?.auth }),
+      }, session.accessToken);
+      setPushSubscriptionId(saved.id);
+      setPushState('enabled');
+      setNotice('Browser class reminders enabled. You can revoke this permission at any time.');
+    } catch (requestError) {
+      setError(requestError.message || 'Could not enable browser reminders.');
+    }
+  }
+
+  async function disablePushNotifications() {
+    if (!session) return;
+    setError(''); setNotice('');
+    try {
+      if (pushSubscriptionId) {
+        await apiFetch(`/api/notifications/push/subscriptions/${pushSubscriptionId}`, { method: 'DELETE' }, session.accessToken);
+      }
+      const registration = await navigator.serviceWorker?.getRegistration('/sw.js');
+      const subscription = await registration?.pushManager?.getSubscription();
+      if (subscription) await subscription.unsubscribe();
+      setPushSubscriptionId(null);
+      setPushState('not_enabled');
+      setNotice('Browser class reminders disabled. In-app reminders remain available.');
+    } catch (requestError) {
+      setError(requestError.message || 'Could not disable browser reminders.');
+    }
+  }
+
+  async function signOut() {
+    if (session && pushSubscriptionId) {
+      try { await apiFetch(`/api/notifications/push/subscriptions/${pushSubscriptionId}`, { method: 'DELETE' }, session.accessToken); } catch { /* Sign-out must not be blocked by push cleanup. */ }
+      try {
+        const registration = await navigator.serviceWorker?.getRegistration('/sw.js');
+        const subscription = await registration?.pushManager?.getSubscription();
+        if (subscription) await subscription.unsubscribe();
+      } catch { /* Local push cleanup is best-effort. */ }
+    }
     setSession(null);
     setMemberships([]);
     setCheckIns([]);
+    setClasses([]);
+    setBookings([]);
+    setRenewalRequests([]);
+    setNotifications([]);
+    setSupportTickets([]);
     setPass(null);
+    setPushSubscriptionId(null);
+    setPushState('not_enabled');
     setError('');
     setNotice('You have signed out.');
   }
@@ -207,11 +571,15 @@ function App() {
         <div className="auth-brand"><Dumbbell size={22} /><span>FIT PULSE</span></div>
         <main className="auth-card">
           <p className="eyebrow">MEMBER ACCESS</p>
-          <h1>{mode === 'login' ? 'Welcome back.' : 'Join your club.'}</h1>
+          <h1>{mode === 'login' ? 'Welcome back.' : mode === 'register' ? 'Join your club.' : mode === 'forgot' ? 'Recover your account.' : 'Choose a new password.'}</h1>
           <p className="auth-subtitle">
             {mode === 'login'
               ? 'Sign in to view your membership and secure digital pass.'
-              : 'Create your member account. Your club must assign a membership before gym entry is enabled.'}
+              : mode === 'register'
+                ? 'Create your member account. Your club must assign a membership before gym entry is enabled.'
+                : mode === 'forgot'
+                  ? 'Enter the email associated with your account. We will provide reset instructions if an active account exists.'
+                  : 'Use the secure reset link from your email to set a new password. Reset links expire and can only be used once.'}
           </p>
 
           {notice && <div className="notice-message"><CheckCircle2 size={16} />{notice}</div>}
@@ -232,39 +600,60 @@ function App() {
                 />
               </label>
             )}
-            <label>
-              Email address
-              <input
-                type="email"
-                autoComplete="email"
-                required
-                value={form.email}
-                onChange={(event) => setForm({ ...form, email: event.target.value })}
-                placeholder="you@example.com"
-              />
-            </label>
-            <label>
-              Password {mode === 'register' && <span className="input-hint">12 characters minimum</span>}
-              <input
-                type="password"
-                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                required
-                minLength={mode === 'register' ? 12 : 1}
-                maxLength={128}
-                value={form.password}
-                onChange={(event) => setForm({ ...form, password: event.target.value })}
-                placeholder={mode === 'login' ? 'Your password' : 'Create a strong password'}
-              />
-            </label>
+            {mode !== 'reset' && (
+              <label>
+                Email address
+                <input
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={form.email}
+                  onChange={(event) => setForm({ ...form, email: event.target.value })}
+                  placeholder="you@example.com"
+                />
+              </label>
+            )}
+            {(mode === 'login' || mode === 'register') && (
+              <label>
+                Password {mode === 'register' && <span className="input-hint">12 characters minimum</span>}
+                <input
+                  type="password"
+                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  required
+                  minLength={mode === 'register' ? 12 : 1}
+                  maxLength={128}
+                  value={form.password}
+                  onChange={(event) => setForm({ ...form, password: event.target.value })}
+                  placeholder={mode === 'login' ? 'Your password' : 'Create a strong password'}
+                />
+              </label>
+            )}
+            {mode === 'reset' && (
+              <>
+                <label>
+                  Password reset token
+                  <input required minLength={20} value={resetToken} onChange={(event) => setResetToken(event.target.value)} placeholder="Paste token from reset email" />
+                </label>
+                <label>
+                  New password <span className="input-hint">12 characters minimum</span>
+                  <input type="password" autoComplete="new-password" required minLength={12} maxLength={128} value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder="Create a strong password" />
+                </label>
+              </>
+            )}
             <button className="primary-button auth-submit" type="submit" disabled={busy}>
-              {busy ? <LoaderCircle className="spin" size={16} /> : mode === 'login' ? <KeyRound size={16} /> : <UserRound size={16} />}
-              {busy ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
+              {busy ? <LoaderCircle className="spin" size={16} /> : mode === 'login' || mode === 'reset' ? <KeyRound size={16} /> : mode === 'forgot' ? <Mail size={16} /> : <UserRound size={16} />}
+              {busy ? 'Please wait…' : mode === 'login' ? 'Sign In' : mode === 'register' ? 'Create Account' : mode === 'forgot' ? 'Send Reset Instructions' : 'Reset Password'}
             </button>
           </form>
 
+          {mode === 'login' && (
+            <div className="auth-switch"><span>Forgot your password?</span>
+              <button type="button" onClick={() => { setMode('forgot'); setError(''); setNotice(''); }}>Recover account</button>
+            </div>
+          )}
           <div className="auth-switch">
-            <span>{mode === 'login' ? 'New to your club?' : 'Already have an account?'}</span>
-            <button type="button" onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setNotice(''); }}>
+            <span>{mode === 'register' ? 'Already have an account?' : mode === 'login' ? 'New to your club?' : 'Return to sign in?'}</span>
+            <button type="button" onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setNotice(''); setNewPassword(''); }}>
               {mode === 'login' ? 'Create account' : 'Sign in'}
             </button>
           </div>
@@ -286,14 +675,21 @@ function App() {
         <p className="nav-label">MEMBER SPACE</p>
         <a className="nav-item active" href="#overview"><Activity size={17} /> Overview</a>
         <a className="nav-item" href="#membership"><CreditCard size={17} /> Membership</a>
-        <a className="nav-item" href="#activity"><CalendarDays size={17} /> Visit history</a>
-        <div className="sidebar-foot">FITNESS MEMBERSHIP<br /></div>
+        <a className="nav-item" href="#membership-management"><TicketCheck size={17} /> Plan management</a>
+        <a className="nav-item" href="#classes"><CalendarDays size={17} /> Classes & bookings</a>
+        <a className="nav-item" href="#activity"><Activity size={17} /> Visit history</a>
+        <a className="nav-item" href="#notifications"><Bell size={17} /> Notifications {unreadNotifications > 0 && <span className="nav-count">{unreadNotifications}</span>}</a>
+        <a className="nav-item" href="#profile"><UserRound size={17} /> Profile</a>
+        <a className="nav-item" href="#privacy"><Settings size={17} /> Privacy</a>
+        <a className="nav-item" href="#support"><CircleHelp size={17} /> Help & support</a>
+        <div className="sidebar-foot">FITNESS MEMBERSHIP<br /><span>V2 · Reservations</span></div>
       </aside>
 
       <main className="main-content" id="overview">
         <header className="topbar">
           <span>MEMBER DASHBOARD</span>
           <div className="topbar-actions">
+            <a className="notification-shortcut" href="#notifications" aria-label={`Notifications, ${unreadNotifications} unread`}><Bell size={15} /> {unreadNotifications > 0 && <span>{unreadNotifications}</span>}</a>
             <span className="avatar" title={session.user.email}>{initials(session.user)}</span>
             <button className="sign-out-button" type="button" onClick={signOut}><LogOut size={14} /> Sign out</button>
           </div>
@@ -382,6 +778,48 @@ function App() {
           </section>
         )}
 
+        <section className="account-panel v2-panel" id="membership-management">
+          <div className="section-head account-section-head"><div><p className="eyebrow">SELF-SERVICE</p><h2>Membership management</h2></div></div>
+          {session.user.role === 'member' ? (
+            <>
+              <p className="settings-description">Request a renewal for club confirmation or pause an active membership for up to 30 days. Renewal requests do not collect payment; the club must approve them.</p>
+              <div className="self-service-controls">
+                <label>Renewal period<select className="settings-input" value={renewalDays} onChange={(event) => setRenewalDays(event.target.value)}><option value="30">30 days</option><option value="90">90 days</option><option value="180">180 days</option><option value="365">365 days</option></select></label>
+                <label>Freeze duration<select className="settings-input" value={freezeDays} onChange={(event) => setFreezeDays(event.target.value)}><option value="1">1 day</option><option value="3">3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select></label>
+              </div>
+              {memberships.length ? <div className="membership-management-list">{memberships.map((membership) => {
+                const displayStatus = membershipDisplayStatus(membership, today);
+                const pendingRequest = renewalRequests.some((item) => item.membership_id === membership.id && item.status === 'pending');
+                const canFreeze = membership.status === 'active' && membership.start_date <= today && membership.expiry_date >= today;
+                const canRenew = ['active', 'expired'].includes(membership.status) && displayStatus !== 'Scheduled';
+                return <article className="managed-membership" key={membership.id}>
+                  <div className="managed-membership-top"><div><strong>{membership.tier.charAt(0).toUpperCase() + membership.tier.slice(1)} plan</strong><p>{humanDate(membership.start_date)} – {humanDate(membership.expiry_date)}</p></div><span className={`ticket-status status-${membership.status}`}>{displayStatus}</span></div>
+                  {membership.status === 'frozen' && <p className="tiny freeze-copy">Frozen from {humanDate(membership.freeze_start_date)} until {humanDate(membership.freeze_until_date)}. Entry is disabled during the pause.</p>}
+                  <div className="managed-actions">
+                    {canRenew && <button type="button" className="secondary-button" disabled={busy || pendingRequest} onClick={() => requestRenewal(membership.id)}><RefreshCw size={14} /> {pendingRequest ? 'Renewal Pending' : 'Request Renewal'}</button>}
+                    {canFreeze && <button type="button" className="secondary-button" disabled={busy} onClick={() => freezeMembership(membership.id)}><Timer size={14} /> Freeze for {freezeDays} days</button>}
+                    {membership.status === 'frozen' && <button type="button" className="secondary-button" disabled={busy} onClick={() => resumeMembership(membership.id)}><CheckCircle2 size={14} /> Resume Membership</button>}
+                  </div>
+                </article>;
+              })}</div> : <p className="empty-activity">No membership record is linked to this account yet.</p>}
+              <div className="section-head account-section-head ticket-heading"><div><p className="eyebrow">REQUEST STATUS</p><h2>Renewal requests</h2></div></div>
+              {renewalRequests.length ? <div className="settings-list">{renewalRequests.map((request) => <article className="ticket-row" key={request.id}>
+                <div className="setting-list-copy"><strong>Request #{request.id} · Membership #{request.membership_id}</strong><p>{request.renewal_days}-day renewal request</p><small>{formatTimestamp(request.created_at)}</small></div>
+                <span className={`ticket-status status-${request.status}`}>{request.status}</span>
+                {request.status === 'pending' && <button type="button" className="small-action" disabled={busy} onClick={() => cancelRenewalRequest(request.id)}>Cancel</button>}
+              </article>)}</div> : <p className="empty-activity">You have no renewal requests.</p>}
+            </>
+          ) : (
+            <>
+              <p className="settings-description">Review member renewal requests. Approval extends the membership expiry date; rejection notifies the member. No payment is processed by this workflow.</p>
+              {renewalRequests.length ? <div className="settings-list">{renewalRequests.map((request) => <article className="ticket-row" key={request.id}>
+                <div className="setting-list-copy"><strong>Request #{request.id} · Member #{request.user_id}</strong><p>Membership #{request.membership_id} · {request.renewal_days}-day extension</p><small>{formatTimestamp(request.created_at)}</small></div>
+                <div className="managed-actions"><button type="button" className="small-action" disabled={busy} onClick={() => reviewRenewalRequest(request.id, 'approved')}>Approve</button><button type="button" className="small-action danger-action" disabled={busy} onClick={() => reviewRenewalRequest(request.id, 'rejected')}>Reject</button></div>
+              </article>)}</div> : <p className="empty-activity">No pending renewal requests.</p>}
+            </>
+          )}
+        </section>
+
         <section className="section-head"><div><p className="eyebrow">YOUR ACTIVITY</p><h2>Membership snapshot</h2></div><button className="text-button refresh-link" type="button" onClick={refreshActivity}><RefreshCw size={13} /> Refresh data</button></section>
         <div className="stats-grid">
           <article className="stat-card">
@@ -397,6 +835,58 @@ function App() {
             <p className="tiny">{latestCheckIn ? `${latestCheckIn.location_name || 'Gym'} · ${formatTimestamp(latestCheckIn.checked_in_at)}` : 'Your verified visits will appear here.'}</p>
           </article>
         </div>
+
+        <section className="account-panel v2-panel" id="classes">
+          <div className="section-head account-section-head"><div><p className="eyebrow">TRAIN WITH PURPOSE</p><h2>Classes & bookings</h2></div><button className="text-button refresh-link" type="button" onClick={refreshActivity}><RefreshCw size={13} /> Refresh schedule</button></div>
+          {session.user.role !== 'member' && (
+            <details className="class-admin-form">
+              <summary>Schedule a class</summary>
+              <form className="settings-form" onSubmit={createClassSchedule}>
+                <div className="class-form-grid">
+                  <label>Class name<input className="settings-input" required minLength={3} maxLength={120} value={classForm.title} onChange={(event) => setClassForm({ ...classForm, title: event.target.value })} placeholder="Strength Foundations" /></label>
+                  <label>Instructor<input className="settings-input" required value={classForm.instructor_name} onChange={(event) => setClassForm({ ...classForm, instructor_name: event.target.value })} placeholder="Instructor name" /></label>
+                  <label>Class type<select className="settings-input" value={classForm.class_type} onChange={(event) => setClassForm({ ...classForm, class_type: event.target.value })}><option>Strength</option><option>Yoga</option><option>Pilates</option><option>Cardio</option><option>Cycle</option><option>Dance</option><option>Recovery</option><option>HIIT</option></select></label>
+                  <label>Club / studio<input className="settings-input" required value={classForm.location_name} onChange={(event) => setClassForm({ ...classForm, location_name: event.target.value })} /></label>
+                  <label>Starts at<input className="settings-input" type="datetime-local" required value={classForm.starts_at} onChange={(event) => setClassForm({ ...classForm, starts_at: event.target.value })} /></label>
+                  <label>Ends at<input className="settings-input" type="datetime-local" required value={classForm.ends_at} onChange={(event) => setClassForm({ ...classForm, ends_at: event.target.value })} /></label>
+                  <label>Capacity<input className="settings-input" type="number" min="1" max="500" required value={classForm.capacity} onChange={(event) => setClassForm({ ...classForm, capacity: event.target.value })} /></label>
+                  <label>Waitlist limit<input className="settings-input" type="number" min="0" max="500" required value={classForm.waitlist_limit} onChange={(event) => setClassForm({ ...classForm, waitlist_limit: event.target.value })} /></label>
+                </div>
+                <label>Class description<textarea className="settings-input" rows={2} maxLength={2000} value={classForm.description} onChange={(event) => setClassForm({ ...classForm, description: event.target.value })} placeholder="Session overview and who it is for" /></label>
+                <label>Cancellation cutoff (minutes)<input className="settings-input" type="number" min="0" max="1440" value={classForm.cancellation_cutoff_minutes} onChange={(event) => setClassForm({ ...classForm, cancellation_cutoff_minutes: event.target.value })} /></label>
+                <button className="primary-button" type="submit" disabled={busy}><CalendarDays size={15} /> Publish class</button>
+              </form>
+            </details>
+          )}
+
+          <div className="section-head account-section-head ticket-heading"><div><p className="eyebrow">YOUR CALENDAR</p><h2>Upcoming bookings</h2></div></div>
+          {bookings.length ? <div className="booking-list">{bookings.map((booking) => <article className="booking-row" key={booking.id}>
+            <div className="booking-date-block"><strong>{new Date(booking.class_session.starts_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</strong><span>{new Date(booking.class_session.starts_at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span></div>
+            <div className="booking-copy"><strong>{booking.class_session.title}</strong><p><MapPin size={12} /> {booking.class_session.location_name} <span>·</span> {booking.class_session.instructor_name}</p><small>{booking.status === 'waitlisted' ? `Waitlist position ${booking.waitlist_position ?? 'updating'}` : 'Confirmed spot'} · {booking.class_session.class_type}</small></div>
+            <span className={`ticket-status status-${booking.status}`}>{booking.status}</span>
+            <button type="button" className="small-action" disabled={busy} onClick={() => cancelBooking(booking.id)}>Cancel</button>
+          </article>)}</div> : <p className="empty-activity">No upcoming class bookings. Explore the schedule below to reserve your first spot.</p>}
+
+          <div className="section-head account-section-head ticket-heading"><div><p className="eyebrow">FIND YOUR NEXT SESSION</p><h2>Class schedule</h2></div><span className="tiny">{filteredClasses.length} classes shown</span></div>
+          <div className="class-filters">
+            <label>Search<input className="settings-input" value={classSearch} onChange={(event) => setClassSearch(event.target.value)} placeholder="Class or instructor" /></label>
+            <label>Class type<select className="settings-input" value={classTypeFilter} onChange={(event) => setClassTypeFilter(event.target.value)}><option value="all">All types</option>{[...new Set(classes.map((item) => item.class_type))].sort().map((kind) => <option key={kind} value={kind}>{kind}</option>)}</select></label>
+            <label>Location<input className="settings-input" value={locationFilter} onChange={(event) => setLocationFilter(event.target.value)} placeholder="Any club" /></label>
+          </div>
+          {filteredClasses.length ? <div className="class-card-grid">{filteredClasses.map((classItem) => {
+            const booking = bookings.find((item) => item.class_session_id === classItem.id && ['booked', 'waitlisted'].includes(item.status));
+            const hasSpots = classItem.available_spots > 0;
+            return <article className="class-card" key={classItem.id}>
+              <div className="class-card-top"><span className="class-type-pill">{classItem.class_type}</span><span className="class-spots">{hasSpots ? `${classItem.available_spots} spots left` : classItem.waitlist_count < classItem.waitlist_limit ? 'Waitlist open' : 'Full'}</span></div>
+              <h3>{classItem.title}</h3><p className="class-description">{classItem.description || 'A coached session at your club.'}</p>
+              <div className="class-detail-lines"><span><Clock3 size={13} /> {formatClassDateTime(classItem.starts_at)} – {new Date(classItem.ends_at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span><span><Users size={13} /> {classItem.instructor_name}</span><span><MapPin size={13} /> {classItem.location_name}</span></div>
+              <p className="class-policy-note">Cancellation closes {classItem.cancellation_cutoff_minutes === 0 ? 'at class start' : `${classItem.cancellation_cutoff_minutes} minutes before start`}.</p>
+              <div className="class-card-footer"><span className="tiny">{classItem.booked_count}/{classItem.capacity} booked</span>
+                {session.user.role === 'member' ? booking ? <button type="button" className="secondary-button compact-button" disabled={busy} onClick={() => cancelBooking(booking.id)}>{booking.status === 'waitlisted' ? 'Leave Waitlist' : 'Cancel Booking'}</button> : <button type="button" className="primary-button compact-button" disabled={busy || !currentMembership || (!hasSpots && classItem.waitlist_count >= classItem.waitlist_limit)} onClick={() => bookClass(classItem.id)}>{!currentMembership ? 'Membership Required' : hasSpots ? 'Book Spot' : classItem.waitlist_count < classItem.waitlist_limit ? 'Join Waitlist' : 'Fully Booked'}</button> : <button type="button" className="secondary-button compact-button" disabled={busy} onClick={() => cancelScheduledClass(classItem.id)}>Cancel Class</button>}
+              </div>
+            </article>;
+          })}</div> : <p className="empty-activity">No upcoming classes match these filters. The club team can add upcoming sessions with “Schedule a class”.</p>}
+        </section>
 
         <section className="activity-panel" id="activity">
           <div className="section-head activity-title"><div><p className="eyebrow">RECENT ACTIVITY</p><h2>Check-in history</h2></div></div>
@@ -415,11 +905,64 @@ function App() {
           )}
         </section>
 
+        <section className="account-panel" id="profile">
+          <div className="section-head account-section-head"><div><p className="eyebrow">ACCOUNT DETAILS</p><h2>Profile</h2></div></div>
+          <form className="settings-form" onSubmit={saveProfile}>
+            <label>Full name<input className="settings-input" required minLength={1} maxLength={120} value={profileName} onChange={(event) => setProfileName(event.target.value)} /></label>
+            <label>Email address<input className="settings-input" value={session.user.email} readOnly aria-describedby="email-readonly-note" /></label>
+            <p id="email-readonly-note" className="tiny">Email changes require a separate verification workflow and are not enabled in V1.</p>
+            <button className="secondary-button form-submit" type="submit" disabled={busy}><Save size={14} /> Save profile</button>
+          </form>
+        </section>
+
+        <section className="account-panel" id="notifications">
+          <div className="section-head account-section-head"><div><p className="eyebrow">ACCOUNT UPDATES</p><h2>Notifications {unreadNotifications > 0 && <span className="count-chip">{unreadNotifications} unread</span>}</h2></div>
+            <div className="notification-heading-actions">{unreadNotifications > 0 && <button className="text-button" type="button" onClick={markAllNotificationsRead}>Mark all as read</button>}
+              {pushState === 'enabled' ? <button className="small-action" type="button" onClick={disablePushNotifications}>Disable browser push</button> : pushConfig.enabled ? <button className="small-action" type="button" onClick={enablePushNotifications}>Enable class reminders</button> : <span className="tiny push-config-note">Browser push needs VAPID configuration</span>}
+            </div>
+          </div>
+          {notifications.length ? <div className="settings-list">
+            {notifications.slice(0, 20).map((item) => <article className={`notification-row ${item.is_read ? 'is-read' : ''}`} key={item.id}>
+              <span className="notification-icon"><Bell size={15} /></span>
+              <div className="setting-list-copy"><strong>{item.title}</strong><p>{item.body}</p><small>{formatTimestamp(item.created_at)} · {item.category}</small></div>
+              {!item.is_read && <button type="button" className="small-action" onClick={() => markNotificationRead(item.id)}>Mark read</button>}
+            </article>)}
+          </div> : <p className="empty-activity">No notifications yet. Important account and membership updates will appear here.</p>}
+        </section>
+
+        <section className="account-panel" id="privacy">
+          <div className="section-head account-section-head"><div><p className="eyebrow">DATA & CONSENT</p><h2>Privacy preferences</h2></div></div>
+          <p className="settings-description">Optional analytics and marketing use are off unless you enable them. Essential processing for authentication, membership access, security, and support remains necessary to provide the service.</p>
+          <form className="settings-form" onSubmit={savePrivacy}>
+            <label className="toggle-row"><span><strong>Product analytics</strong><small>Allow optional usage analytics to help improve member experiences.</small></span><input type="checkbox" checked={privacy.analytics_consent} onChange={(event) => setPrivacy((previous) => ({ ...previous, analytics_consent: event.target.checked }))} /></label>
+            <label className="toggle-row"><span><strong>Product updates and offers</strong><small>Allow optional marketing communications about club products and offers.</small></span><input type="checkbox" checked={privacy.marketing_consent} onChange={(event) => setPrivacy((previous) => ({ ...previous, marketing_consent: event.target.checked }))} /></label>
+            <p className="tiny">Consent schema: v1 · You can change these optional choices at any time.</p>
+            <button className="secondary-button form-submit" type="submit" disabled={busy}><Save size={14} /> Save privacy preferences</button>
+          </form>
+        </section>
+
+        <section className="account-panel" id="support">
+          <div className="section-head account-section-head"><div><p className="eyebrow">WE CAN HELP</p><h2>Help & support</h2></div></div>
+          <form className="settings-form" onSubmit={submitSupportTicket}>
+            <label>Request category<select className="settings-input" value={supportForm.category} onChange={(event) => setSupportForm((previous) => ({ ...previous, category: event.target.value }))}>
+              <option value="access">Gym access</option><option value="membership">Membership</option><option value="billing">Billing</option><option value="technical">Technical issue</option><option value="privacy">Privacy</option><option value="other">Other</option>
+            </select></label>
+            <label>Subject<input className="settings-input" required minLength={4} maxLength={140} value={supportForm.subject} onChange={(event) => setSupportForm((previous) => ({ ...previous, subject: event.target.value }))} placeholder="Briefly describe the issue" /></label>
+            <label>Details<textarea className="settings-input" required minLength={10} maxLength={3000} rows={4} value={supportForm.message} onChange={(event) => setSupportForm((previous) => ({ ...previous, message: event.target.value }))} placeholder="Include the relevant details, but do not share your password." /></label>
+            <button className="secondary-button form-submit" type="submit" disabled={busy}><Send size={14} /> Submit support request</button>
+          </form>
+          <div className="section-head account-section-head ticket-heading"><div><p className="eyebrow">YOUR REQUESTS</p><h2>Support history</h2></div></div>
+          {supportTickets.length ? <div className="settings-list">{supportTickets.map((ticket) => <article className="ticket-row" key={ticket.id}>
+            <div className="setting-list-copy"><strong>#{ticket.id} · {ticket.subject}</strong><p>{ticket.message}</p>{ticket.staff_response && <p className="staff-response"><b>Staff response:</b> {ticket.staff_response}</p>}<small>{formatTimestamp(ticket.created_at)} · {ticket.category}</small></div>
+            <span className={`ticket-status status-${ticket.status}`}>{ticket.status.replace('_', ' ')}</span>
+          </article>)}</div> : <p className="empty-activity">You have not submitted a support request yet.</p>}
+        </section>
+
         <section className="api-card">
           <div className="api-copy"><p className="eyebrow">ACCOUNT SECURITY</p><h3>Signed in as {session.user.email}</h3><p className="api-message"><ShieldCheck size={15} /> Session token remains in memory only.</p></div>
           <button className="secondary-button" type="button" onClick={signOut}><LogOut size={15} /> Sign out</button>
         </section>
-        <footer>FIT PULSE </footer>
+        <footer>FIT PULSE</footer>
       </main>
     </div>
   );
