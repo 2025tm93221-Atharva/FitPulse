@@ -44,19 +44,25 @@ pipeline {
                 dir('backEnd') {
                     sh '''
                         set -eu
-                        python3.14 -m venv .venv
-                        .venv/bin/python -m pip install --upgrade pip
-                        .venv/bin/python -m pip install -r requirements.txt ruff==0.17.0
-                        export PATH="$PWD/.venv/bin:$PATH"
-                        ruff check --select E4,E7,E9,F app migrations tests
-                        python -m compileall -q app migrations tests
-                        pytest -q
+                        docker run --rm --pull=always \
+                            --user "$(id -u):$(id -g)" \
+                            --env HOME=/tmp \
+                            --volume "$PWD:/workspace" \
+                            --workdir /workspace \
+                            python:3.14-slim \
+                            sh -eu -c '
+                                python -m venv /tmp/fitpulse-venv
+                                /tmp/fitpulse-venv/bin/python -m pip install --upgrade pip
+                                /tmp/fitpulse-venv/bin/python -m pip install -r requirements.txt ruff==0.17.0
+                                export PATH="/tmp/fitpulse-venv/bin:$PATH"
+                                ruff check --select E4,E7,E9,F app migrations tests
+                                python -m compileall -q app migrations tests
+                                pytest -q
 
-                        migration_db="/tmp/fitpulse-jenkins-${BUILD_NUMBER}.db"
-                        rm -f "$migration_db"
-                        export DATABASE_URL="sqlite:////tmp/fitpulse-jenkins-${BUILD_NUMBER}.db"
-                        alembic upgrade head
-                        alembic check
+                                export DATABASE_URL="sqlite:////tmp/fitpulse-jenkins-migrations.db"
+                                alembic upgrade head
+                                alembic check
+                            '
                     '''
                 }
             }
