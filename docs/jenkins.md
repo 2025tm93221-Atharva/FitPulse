@@ -11,11 +11,11 @@ use staging/production credentials.
 Create an agent with the Jenkins label `fitpulse-ci` and install:
 
 - Git
-- Node.js 22 and npm
-- Python 3.14
-- Poetry 2.5.1
-- Ruff 0.17.0 (available as `ruff` on `PATH`)
 - Docker CLI and a Docker daemon the agent is permitted to use
+
+Install Node.js 22 and npm on the agent and make both executables available on
+the agent's `PATH`. The frontend stage checks that both commands exist and
+that the Node.js major version is 22 before running `npm ci`.
 
 The Jenkins controller needs Pipeline and GitHub Branch Source support. Keep
 builds on an isolated CI agent, not the controller. The agent needs enough disk
@@ -57,9 +57,10 @@ contributors' pull requests.
   exact revision supplied by the multibranch job.
 - **Frontend quality gate** runs `npm ci`, ESLint, Vitest, and the Vite
   production build.
-- **Backend quality gate** installs the locked Poetry dependencies, runs the
-  CI Ruff rules, checks Python syntax, runs pytest, and applies/checks
-  migrations against a fresh SQLite database.
+- **Backend quality gate** runs in a disposable Python 3.14 Docker container,
+  installs dependencies from `backEnd/requirements.txt` and Ruff, checks
+  Python syntax, runs pytest, and applies/checks migrations against a fresh
+  SQLite database. Python does not need to be installed on the Jenkins agent.
 - **Docker image builds** builds the backend and frontend images without
   publishing them. The tag includes the Jenkins build identity so parallel
   branches do not reuse the same image tag.
