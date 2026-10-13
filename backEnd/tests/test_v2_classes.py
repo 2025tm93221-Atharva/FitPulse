@@ -2,9 +2,8 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select
 
-from app.models import ClassBooking, ClassReminder, ClassSession, Notification
+from app.models import ClassReminder, Notification
 from app.core.class_reminders import process_due_class_reminders
-from app.core.database import SessionLocal
 from tests.conftest import create_account, membership_payload
 
 

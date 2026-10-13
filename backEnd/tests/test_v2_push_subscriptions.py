@@ -1,6 +1,4 @@
 from app.core.config import settings
-from app.models import PushSubscription
-from sqlalchemy import select
 
 
 def auth(account):

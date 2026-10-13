@@ -1,8 +1,6 @@
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, timedelta
 
-from sqlalchemy import select
-
-from app.models import Membership, MembershipRenewalRequest
+from app.models import Membership
 from tests.conftest import create_account, membership_payload
 
 
@@ -111,7 +109,6 @@ def test_scheduled_freeze_automatically_resumes_membership(client, admin_account
 
 
 def test_freeze_is_rejected_when_class_booking_overlaps_freeze_window(client, admin_account, staff_account, member_account):
-    from datetime import datetime, timezone
 
     from tests.test_v2_classes import create_class
 
@@ -141,7 +138,6 @@ def test_admin_status_endpoint_cannot_bypass_freeze_lifecycle(client, admin_acco
 
 
 def test_renewal_approval_cannot_overlap_another_membership(client, admin_account, member_account):
-    today = date.today()
     active = create_active_membership(client, admin_account, member_account, expiry_days=5)
     active_expiry = date.fromisoformat(active["expiry_date"])
     future = client.post(

@@ -47,7 +47,7 @@ def _send_browser_push(db: Session, user_id: int, title: str, body: str, url: st
     if not settings.vapid_public_key or not settings.vapid_private_key or not settings.vapid_claims_email:
         return
     try:
-        from pywebpush import WebPushException, webpush  # type: ignore[import-not-found]
+        from pywebpush import webpush  # type: ignore[import-not-found]
     except ImportError:
         return
 
