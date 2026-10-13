@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user, require_roles
 from app.core.clock import business_today
 from app.core.database import get_db
+from app.core.notifications import add_notification
 from app.models import Membership, User
 from app.schemas import MembershipCreate, MembershipRead, MembershipStatusUpdate
 
@@ -60,6 +61,11 @@ def create_membership(
 
     membership = Membership(**payload.model_dump())
     db.add(membership)
+    db.flush()
+    add_notification(
+        db, user.id, "Membership created",
+        f"Your {membership.tier} membership is {membership.status}.", "membership",
+    )
     db.commit()
     db.refresh(membership)
     return membership
@@ -110,6 +116,10 @@ def update_membership_status(
         if overlap_id is not None:
             raise HTTPException(status_code=409, detail="Member already has an overlapping active membership")
     membership.status = payload.status
+    add_notification(
+        db, membership.user_id, "Membership status updated",
+        f"Your {membership.tier} membership status is now {membership.status}.", "membership",
+    )
     db.commit()
     db.refresh(membership)
     return membership
