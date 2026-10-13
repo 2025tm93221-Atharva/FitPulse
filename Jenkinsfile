@@ -1,70 +1,179 @@
-pipeline {
-    agent {
-        label 'fitpulse-ci'
-    }
+pipeline { 
 
-    options {
-        skipDefaultCheckout(true)
-        disableConcurrentBuilds()
-        timestamps()
-        timeout(time: 45, unit: 'MINUTES')
-    }
+ 
 
-    stages {
-        stage('Clean checkout') {
-            steps {
-                deleteDir()
-                checkout scm
-            }
-        }
+    agent any 
 
-        stage('Frontend quality gate') {
-            steps {
-                dir('frontEnd') {
-                    sh '''
-                        set -eu
-                        npm ci
-                        npm run lint
-                        npm test
-                        npm run build
-                    '''
-                }
-            }
-        }
+ 
 
-        stage('Backend quality gate') {
-            steps {
-                dir('backEnd') {
-                    sh '''
-                        set -eu
-                        poetry install --no-interaction --sync
-                        ruff check --select E4,E7,E9,F app migrations tests
-                        poetry run python -m compileall -q app migrations tests
-                        poetry run pytest -q
-                        rm -f .jenkins-ci-migrations.db
-                        DATABASE_URL="sqlite:////${WORKSPACE#/}/backEnd/.jenkins-ci-migrations.db" poetry run alembic upgrade head
-                        DATABASE_URL="sqlite:////${WORKSPACE#/}/backEnd/.jenkins-ci-migrations.db" poetry run alembic check
-                    '''
-                }
-            }
-        }
+    triggers { 
 
-        stage('Docker image builds') {
-            steps {
-                script {
-                    def imageTag = "jenkins-${env.BUILD_TAG.replaceAll(/[^A-Za-z0-9_.-]/, '-').take(100)}"
-                    withEnv(["FITPULSE_IMAGE_TAG=${imageTag}"]) {
-                        sh '''
-                            set -eu
-                            docker build --pull -t "fitpulse-backend:${FITPULSE_IMAGE_TAG}" ./backEnd
-                            docker build --pull \
-                                --build-arg VITE_API_BASE_URL= \
-                                -t "fitpulse-frontend:${FITPULSE_IMAGE_TAG}" \
-                                ./frontEnd
-                        '''
-                    }
-                }
-            }
-        }
-    }
-}
+        pollSCM('H/2 * * * *') 
+
+    } 
+
+ 
+
+    stages { 
+
+ 
+
+        stage('Checkout') { 
+
+            steps { 
+
+                echo 'Checking out source code' 
+
+                checkout scm 
+
+            } 
+
+        } 
+
+ 
+
+        stage('Build') { 
+
+            steps { 
+
+                echo 'Installing Python dependencies' 
+
+ 
+
+                sh ''' 
+
+                    python3 -m venv .venv 
+
+                    .venv/bin/pip install -r requirements.txt 
+
+                ''' 
+
+            } 
+
+        } 
+
+ 
+
+        stage('Test') { 
+
+            steps { 
+
+                echo 'Running automated tests' 
+
+ 
+
+                sh ''' 
+
+                    .venv/bin/pytest -q 
+
+                ''' 
+
+            } 
+
+        } 
+
+ 
+
+        stage('Code Inspection') { 
+
+            steps { 
+
+                echo 'Running SonarQube analysis' 
+
+ 
+
+                sh ''' 
+
+                    sonar-scanner 
+
+                ''' 
+
+            } 
+
+        } 
+
+ 
+
+        stage('Deploy') { 
+
+            steps { 
+
+                echo 'Deploying application' 
+
+ 
+
+                sh ''' 
+
+                    mkdir -p /tmp/student-task-manager 
+
+ 
+
+                    cp -r app.py templates static requirements.txt \ 
+
+                        /tmp/student-task-manager/ 
+
+ 
+
+                    cd /tmp/student-task-manager 
+
+ 
+
+                    python3 -m venv .venv 
+
+ 
+
+                    .venv/bin/pip install -r requirements.txt 
+
+ 
+
+                    if [ -f app.pid ]; then 
+
+                        kill $(cat app.pid) 2>/dev/null || true 
+
+                    fi 
+
+ 
+
+                    nohup .venv/bin/python app.py \ 
+
+                        > app.log 2>&1 & 
+
+ 
+
+                    echo $! > app.pid 
+
+                ''' 
+
+            } 
+
+        } 
+
+ 
+
+    } 
+
+ 
+
+    post { 
+
+ 
+
+        success { 
+
+            echo 'CI/CD pipeline completed successfully' 
+
+        } 
+
+ 
+
+        failure { 
+
+            echo 'Pipeline failed - deployment was not completed' 
+
+        } 
+
+ 
+
+    } 
+
+} 
