@@ -67,7 +67,7 @@ jobs:
       - name: Lint Python
         uses: astral-sh/ruff-action@v3
         with:
-          args: --select E4,E7,E9,F
+          args: check --select E4,E7,E9,F
           src: >-
             backEnd/app
             backEnd/migrations
