@@ -15,13 +15,19 @@ pipeline {
         }
 
         stage('Frontend quality gate') {
-            tools {
-                nodejs 'NodeJS 22'
-            }
             steps {
                 dir('frontEnd') {
                     sh '''
                         set -eu
+                        if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+                            echo 'Node.js 22 and npm must be installed on the Jenkins agent and available on PATH.'
+                            exit 1
+                        fi
+                        node_major="$(node -p 'process.versions.node.split(".")[0]')"
+                        if [ "$node_major" != "22" ]; then
+                            echo "Node.js 22 is required; found $(node --version)."
+                            exit 1
+                        fi
                         node --version
                         npm --version
                         npm ci
