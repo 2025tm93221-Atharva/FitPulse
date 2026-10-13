@@ -97,3 +97,95 @@ class CheckInRead(BaseModel):
     location_name: str | None
     result: str
     scanner_device_id: int | None = None
+
+
+class UserProfileUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    full_name: str = Field(min_length=1, max_length=120)
+
+    @field_validator("full_name")
+    @classmethod
+    def trim_name(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("full_name must not be blank")
+        return value
+
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+
+class PasswordResetConfirm(BaseModel):
+    token: str = Field(min_length=20, max_length=256)
+    new_password: str = Field(min_length=12, max_length=128)
+
+
+class PasswordResetRequestResponse(BaseModel):
+    message: str
+    # Never present outside development; enables local recovery-flow acceptance tests.
+    debug_reset_token: str | None = None
+
+
+class NotificationRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    title: str
+    body: str
+    category: str
+    is_read: bool
+    created_at: datetime
+    read_at: datetime | None
+
+
+class PrivacyPreferencesRead(BaseModel):
+    analytics_consent: bool = False
+    marketing_consent: bool = False
+    consent_version: str = "v1"
+    updated_at: datetime | None = None
+
+
+class PrivacyPreferencesUpdate(BaseModel):
+    analytics_consent: bool = False
+    marketing_consent: bool = False
+
+
+class SupportTicketCreate(BaseModel):
+    category: Literal["access", "membership", "billing", "technical", "privacy", "other"] = "other"
+    subject: str = Field(min_length=4, max_length=140)
+    message: str = Field(min_length=10, max_length=3000)
+
+    @field_validator("subject", "message")
+    @classmethod
+    def trim_ticket_text(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("This field must not be blank")
+        return value
+
+
+class SupportTicketStatusUpdate(BaseModel):
+    status: Literal["open", "in_progress", "resolved", "closed"]
+    staff_response: str | None = Field(default=None, max_length=3000)
+
+    @field_validator("staff_response")
+    @classmethod
+    def trim_staff_response(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        value = value.strip()
+        return value or None
+
+
+class SupportTicketRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    user_id: int
+    category: str
+    subject: str
+    message: str
+    status: str
+    staff_response: str | None
+    created_at: datetime
+    updated_at: datetime
+    resolved_at: datetime | None
