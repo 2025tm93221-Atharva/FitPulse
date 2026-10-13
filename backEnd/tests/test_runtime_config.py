@@ -15,8 +15,8 @@ def test_staging_accepts_unique_secret_and_iana_timezone():
         secret_key="a-test-only-random-secret-long-enough-for-staging-123456789",
         business_timezone="Asia/Kolkata",
         mail_backend="smtp",
-        mail_from="FitPulse Test <test@example.com>",
-        smtp_host="smtp.example.com",
+        smtp_host="mail.example.test",
+        mail_from="noreply@example.test",
     )
     assert settings.business_timezone == "Asia/Kolkata"
 
@@ -32,8 +32,15 @@ def test_production_rejects_local_cors_origin():
             environment="production",
             secret_key="a-production-secret-that-is-long-enough-and-not-default-123",
             cors_origins="https://fitness.example.com,http://localhost:5173",
-            public_app_url="https://fitness.example.com",
+        )
+
+
+def test_staging_rejects_placeholder_smtp_host():
+    with pytest.raises(ValidationError):
+        Settings(
+            environment="staging",
+            secret_key="a-test-only-random-secret-long-enough-for-staging-123456789",
             mail_backend="smtp",
-            mail_from="FitPulse Test <test@example.com>",
-            smtp_host="smtp.example.com",
+            smtp_host="CHANGE_ME_SMTP_HOST",
+            mail_from="noreply@example.test",
         )
