@@ -13,7 +13,7 @@ from app.core.clock import business_today
 from app.core.database import get_db
 from app.core.config import settings
 from app.core.notifications import add_notification
-from app.models import ClassBooking, ClassReminder, ClassSession, Membership, User
+from app.models import ClassBooking, ClassSession, Membership, User
 from app.schemas import ClassBookingRead, ClassSessionCreate, ClassSessionRead, ClassSessionUpdate
 
 router = APIRouter(tags=["classes & bookings"])
