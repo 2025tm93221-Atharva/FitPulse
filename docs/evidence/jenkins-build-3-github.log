@@ -1,0 +1,368 @@
+Started by an SCM change
+Checking out git https://github.com/2025tm93221-Atharva/FitPulse.git into /var/jenkins_home/workspace/fitpulse@script/6d85f90f2771f2fdc73d29da6105be8b32b3b4276afeab8d1c5139b5e4c49288 to read Jenkinsfile
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/2025tm93221-Atharva/FitPulse.git
+ > git init /var/jenkins_home/workspace/fitpulse@script/6d85f90f2771f2fdc73d29da6105be8b32b3b4276afeab8d1c5139b5e4c49288 # timeout=10
+Fetching upstream changes from https://github.com/2025tm93221-Atharva/FitPulse.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/2025tm93221-Atharva/FitPulse.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/2025tm93221-Atharva/FitPulse.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/feat/devops-cicd^{commit} # timeout=10
+Checking out Revision 5fdbc0cec65e3b825745b943efae7de7fb60aff7 (refs/remotes/origin/feat/devops-cicd)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 5fdbc0cec65e3b825745b943efae7de7fb60aff7 # timeout=10
+Commit message: "docs: add README and pipeline evidence"
+First time build. Skipping changelog.
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/fitpulse
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/fitpulse/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/2025tm93221-Atharva/FitPulse.git # timeout=10
+Fetching upstream changes from https://github.com/2025tm93221-Atharva/FitPulse.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/2025tm93221-Atharva/FitPulse.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/feat/devops-cicd^{commit} # timeout=10
+Checking out Revision 5fdbc0cec65e3b825745b943efae7de7fb60aff7 (refs/remotes/origin/feat/devops-cicd)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 5fdbc0cec65e3b825745b943efae7de7fb60aff7 # timeout=10
+Commit message: "docs: add README and pipeline evidence"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] timeout
+[2026-11-24T15:41:29.586Z] Timeout set to expire in 45 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Prepare)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] readFile
+[Pipeline] sh
+[2026-11-24T15:41:30.029Z] + git rev-parse --short=8 HEAD
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] sh
+[2026-11-24T15:41:30.404Z] + rm -rf reports dist-artifacts
+[2026-11-24T15:41:30.404Z] + mkdir -p reports dist-artifacts
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build images)
+[Pipeline] sh
+[2026-11-24T15:41:30.724Z] + docker build --target test --build-arg APP_VERSION=1.1.0-b3-5fdbc0ce -t fitpulse-api:1.1.0-b3-5fdbc0ce-test backEnd
+[2026-11-24T15:41:31.640Z] #0 building with "default" instance using docker driver
+[2026-11-24T15:41:31.641Z] 
+[2026-11-24T15:41:31.641Z] #1 [internal] load build definition from Dockerfile
+[2026-11-24T15:41:31.641Z] #1 transferring dockerfile: 1.91kB done
+[2026-11-24T15:41:31.641Z] #1 DONE 0.0s
+[2026-11-24T15:41:31.641Z] 
+[2026-11-24T15:41:31.641Z] #2 [internal] load metadata for docker.io/library/python:3.14-slim
+[2026-11-24T15:41:31.641Z] #2 DONE 0.1s
+[2026-11-24T15:41:31.893Z] 
+[2026-11-24T15:41:31.893Z] #3 [internal] load .dockerignore
+[2026-11-24T15:41:31.893Z] #3 transferring context: 121B done
+[2026-11-24T15:41:31.893Z] #3 DONE 0.0s
+[2026-11-24T15:41:31.893Z] 
+[2026-11-24T15:41:31.893Z] #4 [base 1/2] FROM docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170
+[2026-11-24T15:41:31.893Z] #4 resolve docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170 0.0s done
+[2026-11-24T15:41:31.893Z] #4 DONE 0.0s
+[2026-11-24T15:41:31.893Z] 
+[2026-11-24T15:41:31.893Z] #5 [internal] load build context
+[2026-11-24T15:41:31.894Z] #5 transferring context: 36.06kB 0.0s done
+[2026-11-24T15:41:31.894Z] #5 DONE 0.0s
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #6 [deps 3/3] RUN --mount=type=cache,target=/root/.cache poetry install --only main --no-root
+[2026-11-24T15:41:31.894Z] #6 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #7 [test 1/5] COPY --from=test-deps /opt/venv /opt/venv
+[2026-11-24T15:41:31.894Z] #7 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #8 [base 2/2] WORKDIR /srv/backend
+[2026-11-24T15:41:31.894Z] #8 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #9 [app 2/4] COPY alembic.ini ./
+[2026-11-24T15:41:31.894Z] #9 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #10 [app 1/4] RUN addgroup --system --gid 10001 app     && adduser --system --uid 10001 --ingroup app app
+[2026-11-24T15:41:31.894Z] #10 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #11 [test 2/5] COPY pyproject.toml ./
+[2026-11-24T15:41:31.894Z] #11 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #12 [deps 2/3] COPY pyproject.toml poetry.lock ./
+[2026-11-24T15:41:31.894Z] #12 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #13 [test-deps 1/1] RUN --mount=type=cache,target=/root/.cache poetry install --no-root
+[2026-11-24T15:41:31.894Z] #13 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #14 [test 3/5] COPY tests ./tests
+[2026-11-24T15:41:31.894Z] #14 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #15 [deps 1/3] RUN --mount=type=cache,target=/root/.cache pip install poetry==2.5.1 && python -m venv /opt/venv
+[2026-11-24T15:41:31.894Z] #15 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #16 [app 3/4] COPY migrations ./migrations
+[2026-11-24T15:41:31.894Z] #16 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #17 [app 4/4] COPY app ./app
+[2026-11-24T15:41:31.894Z] #17 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #18 [test 4/5] COPY smoke ./smoke
+[2026-11-24T15:41:31.894Z] #18 CACHED
+[2026-11-24T15:41:31.894Z] 
+[2026-11-24T15:41:31.894Z] #19 [test 5/5] RUN mkdir /reports && chown -R app:app /reports /srv/backend
+[2026-11-24T15:41:32.450Z] #19 DONE 0.6s
+[2026-11-24T15:41:32.702Z] 
+[2026-11-24T15:41:32.702Z] #20 exporting to image
+[2026-11-24T15:41:32.702Z] #20 exporting layers 0.0s done
+[2026-11-24T15:41:32.702Z] #20 exporting manifest sha256:b2f921973dec82fa060c804dcacf801817d6b15c7ea03c58ed75f44267351b54 done
+[2026-11-24T15:41:32.702Z] #20 exporting config sha256:f142854805b589b1ed0da631a06cd8b2cbdb0befce706989cb4a15d622871450 done
+[2026-11-24T15:41:32.702Z] #20 exporting attestation manifest sha256:c1e98c6d8f817b4d0ba28c41721a0e5cb86c0e61d10fcca5c724e3332525e76e done
+[2026-11-24T15:41:32.702Z] #20 exporting manifest list sha256:a36f6f3e48f5b312cf515bd07807a361d61ded52cd8d867aa1f1558cb60e88f3 done
+[2026-11-24T15:41:32.703Z] #20 naming to docker.io/library/fitpulse-api:1.1.0-b3-5fdbc0ce-test done
+[2026-11-24T15:41:32.703Z] #20 unpacking to docker.io/library/fitpulse-api:1.1.0-b3-5fdbc0ce-test
+[2026-11-24T15:41:33.616Z] #20 unpacking to docker.io/library/fitpulse-api:1.1.0-b3-5fdbc0ce-test 1.2s done
+[2026-11-24T15:41:33.871Z] #20 DONE 1.4s
+[Pipeline] sh
+[2026-11-24T15:41:34.165Z] + docker build --build-arg APP_VERSION=1.1.0-b3-5fdbc0ce -t fitpulse-api:1.1.0-b3-5fdbc0ce backEnd
+[2026-11-24T15:41:34.420Z] #0 building with "default" instance using docker driver
+[2026-11-24T15:41:34.420Z] 
+[2026-11-24T15:41:34.420Z] #1 [internal] load build definition from Dockerfile
+[2026-11-24T15:41:34.420Z] #1 transferring dockerfile: 1.91kB done
+[2026-11-24T15:41:34.420Z] #1 DONE 0.0s
+[2026-11-24T15:41:34.420Z] 
+[2026-11-24T15:41:34.420Z] #2 [internal] load metadata for docker.io/library/python:3.14-slim
+[2026-11-24T15:41:34.420Z] #2 DONE 0.0s
+[2026-11-24T15:41:34.420Z] 
+[2026-11-24T15:41:34.420Z] #3 [internal] load .dockerignore
+[2026-11-24T15:41:34.420Z] #3 transferring context: 121B done
+[2026-11-24T15:41:34.420Z] #3 DONE 0.0s
+[2026-11-24T15:41:34.420Z] 
+[2026-11-24T15:41:34.420Z] #4 [internal] load build context
+[2026-11-24T15:41:34.420Z] #4 DONE 0.0s
+[2026-11-24T15:41:34.420Z] 
+[2026-11-24T15:41:34.420Z] #5 [base 1/2] FROM docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170
+[2026-11-24T15:41:34.420Z] #5 resolve docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170 0.0s done
+[2026-11-24T15:41:34.420Z] #5 DONE 0.0s
+[2026-11-24T15:41:34.420Z] 
+[2026-11-24T15:41:34.421Z] #4 [internal] load build context
+[2026-11-24T15:41:34.421Z] #4 transferring context: 1.20kB 0.0s done
+[2026-11-24T15:41:34.421Z] #4 DONE 0.0s
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #6 [app 2/4] COPY alembic.ini ./
+[2026-11-24T15:41:34.421Z] #6 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #7 [deps 3/3] RUN --mount=type=cache,target=/root/.cache poetry install --only main --no-root
+[2026-11-24T15:41:34.421Z] #7 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #8 [base 2/2] WORKDIR /srv/backend
+[2026-11-24T15:41:34.421Z] #8 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #9 [app 1/4] RUN addgroup --system --gid 10001 app     && adduser --system --uid 10001 --ingroup app app
+[2026-11-24T15:41:34.421Z] #9 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #10 [deps 1/3] RUN --mount=type=cache,target=/root/.cache pip install poetry==2.5.1 && python -m venv /opt/venv
+[2026-11-24T15:41:34.421Z] #10 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #11 [app 3/4] COPY migrations ./migrations
+[2026-11-24T15:41:34.421Z] #11 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #12 [app 4/4] COPY app ./app
+[2026-11-24T15:41:34.421Z] #12 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #13 [deps 2/3] COPY pyproject.toml poetry.lock ./
+[2026-11-24T15:41:34.421Z] #13 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #14 [runtime 1/1] COPY --from=deps /opt/venv /opt/venv
+[2026-11-24T15:41:34.421Z] #14 CACHED
+[2026-11-24T15:41:34.421Z] 
+[2026-11-24T15:41:34.421Z] #15 exporting to image
+[2026-11-24T15:41:34.421Z] #15 exporting layers done
+[2026-11-24T15:41:34.421Z] #15 exporting manifest sha256:04f67bb94f87d62ad1a763f18a542ae20d99baa5d7effcc53a16ca31d0fdc137 0.0s done
+[2026-11-24T15:41:34.421Z] #15 exporting config sha256:6206384a8de46cf6666bc4bbd68aa407e0679f4e0f292b9990def5aad1ce9072 0.0s done
+[2026-11-24T15:41:34.421Z] #15 exporting attestation manifest sha256:2954bc98d5861ecea83b5afdb8a405735a6cd972fc32b740b94deebc401a6570 0.0s done
+[2026-11-24T15:41:34.421Z] #15 exporting manifest list sha256:aa6e68f4b795a56712f793807caf10fb442eb3454c6fb7654a251021b1c86588 done
+[2026-11-24T15:41:34.421Z] #15 naming to docker.io/library/fitpulse-api:1.1.0-b3-5fdbc0ce done
+[2026-11-24T15:41:34.422Z] #15 unpacking to docker.io/library/fitpulse-api:1.1.0-b3-5fdbc0ce done
+[2026-11-24T15:41:34.422Z] #15 DONE 0.1s
+[Pipeline] sh
+[2026-11-24T15:41:34.700Z] + docker build -t fitpulse-web:1.1.0-b3-5fdbc0ce frontEnd
+[2026-11-24T15:41:34.957Z] #0 building with "default" instance using docker driver
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #1 [internal] load build definition from Dockerfile
+[2026-11-24T15:41:34.957Z] #1 transferring dockerfile: 353B done
+[2026-11-24T15:41:34.957Z] #1 DONE 0.0s
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #2 [internal] load metadata for docker.io/library/nginx:alpine
+[2026-11-24T15:41:34.957Z] #2 DONE 0.0s
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #3 [internal] load metadata for docker.io/library/node:22-alpine
+[2026-11-24T15:41:34.957Z] #3 DONE 0.0s
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #4 [internal] load .dockerignore
+[2026-11-24T15:41:34.957Z] #4 transferring context: 90B done
+[2026-11-24T15:41:34.957Z] #4 DONE 0.0s
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #5 [build 1/6] FROM docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+[2026-11-24T15:41:34.957Z] #5 resolve docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a done
+[2026-11-24T15:41:34.957Z] #5 DONE 0.0s
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #6 [stage-1 1/3] FROM docker.io/library/nginx:alpine@sha256:b50897d5c7b1aa08067c3d90c5e8b3e47ec4e3c91c91446f67820228f7b41e34
+[2026-11-24T15:41:34.957Z] #6 resolve docker.io/library/nginx:alpine@sha256:b50897d5c7b1aa08067c3d90c5e8b3e47ec4e3c91c91446f67820228f7b41e34 done
+[2026-11-24T15:41:34.957Z] #6 DONE 0.0s
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #7 [internal] load build context
+[2026-11-24T15:41:34.957Z] #7 transferring context: 284B done
+[2026-11-24T15:41:34.957Z] #7 DONE 0.0s
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.957Z] #8 [build 6/6] RUN npm run build
+[2026-11-24T15:41:34.957Z] #8 CACHED
+[2026-11-24T15:41:34.957Z] 
+[2026-11-24T15:41:34.958Z] #9 [build 4/6] RUN npm ci
+[2026-11-24T15:41:34.958Z] #9 CACHED
+[2026-11-24T15:41:34.958Z] 
+[2026-11-24T15:41:34.958Z] #10 [build 2/6] WORKDIR /app
+[2026-11-24T15:41:34.958Z] #10 CACHED
+[2026-11-24T15:41:34.958Z] 
+[2026-11-24T15:41:34.958Z] #11 [stage-1 2/3] COPY nginx.conf /etc/nginx/conf.d/default.conf
+[2026-11-24T15:41:34.958Z] #11 CACHED
+[2026-11-24T15:41:34.958Z] 
+[2026-11-24T15:41:34.958Z] #12 [build 3/6] COPY package.json package-lock.json ./
+[2026-11-24T15:41:34.958Z] #12 CACHED
+[2026-11-24T15:41:34.958Z] 
+[2026-11-24T15:41:34.958Z] #13 [build 5/6] COPY . .
+[2026-11-24T15:41:34.958Z] #13 CACHED
+[2026-11-24T15:41:34.958Z] 
+[2026-11-24T15:41:34.958Z] #14 [stage-1 3/3] COPY --from=build /app/dist /usr/share/nginx/html
+[2026-11-24T15:41:34.958Z] #14 CACHED
+[2026-11-24T15:41:34.958Z] 
+[2026-11-24T15:41:34.958Z] #15 exporting to image
+[2026-11-24T15:41:34.958Z] #15 exporting layers done
+[2026-11-24T15:41:34.958Z] #15 exporting manifest sha256:1264ed052693a2cf2d8da95cae4b415ae22913dd3f3cf0e2bbc615265cb46972 done
+[2026-11-24T15:41:34.958Z] #15 exporting config sha256:065598f29f9f253602e1e11928ae537077f9ed9c8981dc3e578bdce8a721621a done
+[2026-11-24T15:41:34.958Z] #15 exporting attestation manifest sha256:ccb07d84915c960b7a79eced315e88f4f5ffd0fc928222967eadc4f7a9ab32e0 done
+[2026-11-24T15:41:34.958Z] #15 exporting manifest list sha256:87b9361f3a5d5ebe14b471c7c811af00b31d050de096cde737cd7687006ebf1c done
+[2026-11-24T15:41:34.958Z] #15 naming to docker.io/library/fitpulse-web:1.1.0-b3-5fdbc0ce done
+[2026-11-24T15:41:34.958Z] #15 unpacking to docker.io/library/fitpulse-web:1.1.0-b3-5fdbc0ce done
+[2026-11-24T15:41:34.958Z] #15 DONE 0.0s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Pytest in container)
+[Pipeline] sh
+[2026-11-24T15:41:35.328Z] + name=fitpulse-test-3
+[2026-11-24T15:41:35.328Z] + docker rm -f fitpulse-test-3
+[2026-11-24T15:41:35.328Z] + rc=0
+[2026-11-24T15:41:35.328Z] + docker run --name fitpulse-test-3 fitpulse-api:1.1.0-b3-5fdbc0ce-test
+[2026-11-24T15:41:56.008Z] .........................................................                [100%]
+[2026-11-24T15:41:56.009Z] =============================== warnings summary ===============================
+[2026-11-24T15:41:56.009Z] ../../opt/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+[2026-11-24T15:41:56.009Z]   /opt/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+[2026-11-24T15:41:56.009Z]     from starlette.testclient import TestClient as TestClient  # noqa
+[2026-11-24T15:41:56.009Z] 
+[2026-11-24T15:41:56.009Z] -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[2026-11-24T15:41:56.009Z] ================================ tests coverage ================================
+[2026-11-24T15:41:56.009Z] _______________ coverage: platform linux, python 3.14.8-final-0 ________________
+[2026-11-24T15:41:56.009Z] 
+[2026-11-24T15:41:56.009Z] Name                            Stmts   Miss Branch BrPart  Cover
+[2026-11-24T15:41:56.009Z] -----------------------------------------------------------------
+[2026-11-24T15:41:56.009Z] app/__init__.py                     0      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/api/__init__.py                 0      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/api/deps.py                    45      3     14      3    90%
+[2026-11-24T15:41:56.009Z] app/api/routes/auth.py             34      3      4      0    92%
+[2026-11-24T15:41:56.009Z] app/api/routes/checkins.py         75      7     18      4    88%
+[2026-11-24T15:41:56.009Z] app/api/routes/health.py           19      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/api/routes/memberships.py      70      6     30      6    88%
+[2026-11-24T15:41:56.009Z] app/api/routes/users.py             8      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/cli.py                         97      1     30      2    98%
+[2026-11-24T15:41:56.009Z] app/core/__init__.py                0      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/core/clock.py                   7      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/core/config.py                 35      0      8      1    98%
+[2026-11-24T15:41:56.009Z] app/core/database.py               21      7      2      1    65%
+[2026-11-24T15:41:56.009Z] app/core/security.py               50      1      6      1    96%
+[2026-11-24T15:41:56.009Z] app/main.py                        25      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/models.py                      52      0      0      0   100%
+[2026-11-24T15:41:56.009Z] app/schemas.py                     47      2      4      2    92%
+[2026-11-24T15:41:56.009Z] -----------------------------------------------------------------
+[2026-11-24T15:41:56.009Z] TOTAL                             585     30    116     20    93%
+[2026-11-24T15:41:56.009Z] Coverage XML written to file /reports/coverage.xml
+[2026-11-24T15:41:56.009Z] 57 passed, 1 warning in 16.50s
+[2026-11-24T15:41:56.570Z] + docker cp fitpulse-test-3:/reports/. reports/
+[2026-11-24T15:41:56.573Z] + docker rm -f fitpulse-test-3
+[2026-11-24T15:41:56.574Z] + exit 0
+Post stage
+[Pipeline] junit
+[2026-11-24T15:41:56.889Z] Recording test results
+[2026-11-24T15:41:57.060Z] [Checks API] No suitable checks publisher found.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (SonarQube quality gate)
+Stage "SonarQube quality gate" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Package artifacts)
+[Pipeline] sh
+[2026-11-24T15:41:57.639Z] + git archive --format=tar.gz -o dist-artifacts/fitpulse-1.1.0-b3-5fdbc0ce.tar.gz HEAD
+[2026-11-24T15:41:57.639Z] + bash -c . scripts/k8s/lib.sh
+[2026-11-24T15:41:57.639Z]                         for s in rolling blue-green canary shadow ab-testing frontend; do
+[2026-11-24T15:41:57.640Z]                             render "k8s/$s" "$RELEASE" > "dist-artifacts/$s-$RELEASE.yaml"
+[2026-11-24T15:41:57.640Z]                         done
+[2026-11-24T15:41:58.197Z] + docker image inspect fitpulse-api:1.1.0-b3-5fdbc0ce fitpulse-web:1.1.0-b3-5fdbc0ce --format {{index .RepoTags 0}} {{.Id}}
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to Docker Hub)
+Stage "Push to Docker Hub" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Load into Minikube)
+Stage "Load into Minikube" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy)
+Stage "Deploy" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] archiveArtifacts
+[2026-11-24T15:41:58.432Z] Archiving artifacts
+[2026-11-24T15:41:58.447Z] Recording fingerprints
+[Pipeline] sh
+[2026-11-24T15:41:58.764Z] + docker image rm fitpulse-api:1.1.0-b3-5fdbc0ce-test
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
