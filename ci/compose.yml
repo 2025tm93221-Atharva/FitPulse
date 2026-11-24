@@ -22,7 +22,6 @@ services:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - ./.kube:/run/kube:ro
-      - ${GIT_MOUNT:-./.empty}:/srv/git:ro
     networks: [ci, minikube]
   sonarqube:
     image: sonarqube:community

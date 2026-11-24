@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 umask 077
-mkdir -p .kube .empty
+mkdir -p .kube
 if [ ! -f .env ]; then
   sed "s/^JENKINS_ADMIN_PASSWORD=.*/JENKINS_ADMIN_PASSWORD=$(openssl rand -hex 16)/" .env.example > .env
 fi

@@ -6,6 +6,11 @@ live() { k get service bluegreen-live -o jsonpath='{.spec.selector.track}'; }
 other() { if [ "$1" = blue ]; then echo green; else echo blue; fi; }
 point() { k patch service "$1" -p "{\"spec\":{\"selector\":{\"track\":\"$2\"}}}"; }
 switch_to() { point bluegreen-live "$1"; point bluegreen-preview "$(other "$1")"; }
+# A failed release must not stay on the idle colour, or "rollback" would go live with it.
+clean_idle() { # <idle colour> <live colour>
+  set_version "api-bluegreen-$1" "$(version_of "api-bluegreen-$2")"
+  wait_rollout "api-bluegreen-$1"
+}
 # The Service switch takes a moment to reach kube-proxy.
 settle() { sleep 3; }
 
@@ -19,12 +24,14 @@ case "${1:-}" in
     set_version "api-bluegreen-$NEW" "$VERSION"
     if ! { wait_rollout "api-bluegreen-$NEW" && settle && smoke $PREVIEW_PORT "$VERSION"; }; then
       log "$NEW failed before the switch; users are still on $OLD"
+      clean_idle "$NEW" "$OLD"
       exit 1
     fi
     switch_to "$NEW"; settle
     if ! smoke $LIVE_PORT "$VERSION"; then
       log "live check failed, switching back to $OLD"
       switch_to "$OLD"
+      clean_idle "$NEW" "$OLD"
       exit 1
     fi
     log "live is now $NEW ($VERSION); $OLD kept for instant rollback" ;;

@@ -44,5 +44,4 @@ coverage.xml
 dist-artifacts/
 ci/.env
 ci/.kube/
-ci/.empty/
 !ci/.env.example
