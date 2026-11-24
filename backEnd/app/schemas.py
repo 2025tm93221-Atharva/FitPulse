@@ -63,6 +63,12 @@ class MembershipRead(BaseModel):
     created_at: datetime
 
 
+class MembershipSummary(BaseModel):
+    has_access: bool
+    tier: str | None = None
+    days_remaining: int = 0
+
+
 class QRTokenResponse(BaseModel):
     qr_token: str
     token_type: Literal["gym_checkin"] = "gym_checkin"

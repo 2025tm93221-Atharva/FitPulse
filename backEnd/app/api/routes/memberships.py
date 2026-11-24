@@ -8,7 +8,7 @@ from app.api.deps import get_current_user, require_roles
 from app.core.clock import business_today
 from app.core.database import get_db
 from app.models import Membership, User
-from app.schemas import MembershipCreate, MembershipRead, MembershipStatusUpdate
+from app.schemas import MembershipCreate, MembershipRead, MembershipStatusUpdate, MembershipSummary
 
 router = APIRouter(prefix="/memberships", tags=["memberships"])
 ALLOWED_TRANSITIONS = {
@@ -28,6 +28,27 @@ def list_my_memberships(
         select(Membership).where(Membership.user_id == current_user.id)
         .order_by(Membership.created_at.desc())
     ))
+
+
+@router.get("/me/summary", response_model=MembershipSummary)
+def summarize_my_membership(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> MembershipSummary:
+    """Current membership at a glance: tier and days left, counting today."""
+    today = business_today()
+    membership = db.scalar(select(Membership).where(
+        Membership.user_id == current_user.id,
+        Membership.status == "active",
+        Membership.start_date <= today,
+        Membership.expiry_date >= today,
+    ).order_by(Membership.expiry_date.desc()).limit(1))
+    if membership is None:
+        return MembershipSummary(has_access=False)
+    return MembershipSummary(
+        has_access=True,
+        tier=membership.tier,
+        days_remaining=(membership.expiry_date - today).days + 1,
+    )
 
 
 @router.post("", response_model=MembershipRead, status_code=status.HTTP_201_CREATED)
