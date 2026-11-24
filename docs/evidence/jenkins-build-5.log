@@ -1,0 +1,562 @@
+Started by an SCM change
+Checking out git https://github.com/2025tm93221-Atharva/FitPulse.git into /var/jenkins_home/workspace/fitpulse@script/6d85f90f2771f2fdc73d29da6105be8b32b3b4276afeab8d1c5139b5e4c49288 to read Jenkinsfile
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/fitpulse@script/6d85f90f2771f2fdc73d29da6105be8b32b3b4276afeab8d1c5139b5e4c49288/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/2025tm93221-Atharva/FitPulse.git # timeout=10
+Fetching upstream changes from https://github.com/2025tm93221-Atharva/FitPulse.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/2025tm93221-Atharva/FitPulse.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/feat/devops-cicd^{commit} # timeout=10
+Checking out Revision 40f9bd2f89414f31caa75dbbd1dcf00f9c50a2f3 (refs/remotes/origin/feat/devops-cicd)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 40f9bd2f89414f31caa75dbbd1dcf00f9c50a2f3 # timeout=10
+Commit message: "ci: skip SCM blame, which hangs in the emulated scanner"
+ > git rev-list --no-walk 77846f3563607481ed683685c13ab7543f78d476 # timeout=10
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/fitpulse
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/fitpulse/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/2025tm93221-Atharva/FitPulse.git # timeout=10
+Fetching upstream changes from https://github.com/2025tm93221-Atharva/FitPulse.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.47.3'
+ > git fetch --tags --force --progress -- https://github.com/2025tm93221-Atharva/FitPulse.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/feat/devops-cicd^{commit} # timeout=10
+Checking out Revision 40f9bd2f89414f31caa75dbbd1dcf00f9c50a2f3 (refs/remotes/origin/feat/devops-cicd)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 40f9bd2f89414f31caa75dbbd1dcf00f9c50a2f3 # timeout=10
+Commit message: "ci: skip SCM blame, which hangs in the emulated scanner"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] timeout
+[2026-11-24T16:16:15.260Z] Timeout set to expire in 45 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Prepare)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] readFile
+[Pipeline] sh
+[2026-11-24T16:16:15.625Z] + git rev-parse --short=8 HEAD
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] sh
+[2026-11-24T16:16:15.941Z] + rm -rf reports dist-artifacts
+[2026-11-24T16:16:15.941Z] + mkdir -p reports dist-artifacts
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build images)
+[Pipeline] sh
+[2026-11-24T16:16:16.248Z] + docker build --target test --build-arg APP_VERSION=1.1.0-b5-40f9bd2f -t fitpulse-api:1.1.0-b5-40f9bd2f-test backEnd
+[2026-11-24T16:16:16.499Z] #0 building with "default" instance using docker driver
+[2026-11-24T16:16:16.499Z] 
+[2026-11-24T16:16:16.499Z] #1 [internal] load build definition from Dockerfile
+[2026-11-24T16:16:16.499Z] #1 transferring dockerfile: 1.91kB done
+[2026-11-24T16:16:16.499Z] #1 DONE 0.0s
+[2026-11-24T16:16:16.499Z] 
+[2026-11-24T16:16:16.499Z] #2 [internal] load metadata for docker.io/library/python:3.14-slim
+[2026-11-24T16:16:16.499Z] #2 DONE 0.0s
+[2026-11-24T16:16:16.499Z] 
+[2026-11-24T16:16:16.499Z] #3 [internal] load .dockerignore
+[2026-11-24T16:16:16.499Z] #3 transferring context: 121B done
+[2026-11-24T16:16:16.499Z] #3 DONE 0.0s
+[2026-11-24T16:16:16.499Z] 
+[2026-11-24T16:16:16.499Z] #4 [internal] load build context
+[2026-11-24T16:16:16.499Z] #4 DONE 0.0s
+[2026-11-24T16:16:16.499Z] 
+[2026-11-24T16:16:16.499Z] #5 [base 1/2] FROM docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170
+[2026-11-24T16:16:16.499Z] #5 resolve docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170 0.0s done
+[2026-11-24T16:16:16.499Z] #5 DONE 0.0s
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #4 [internal] load build context
+[2026-11-24T16:16:16.750Z] #4 transferring context: 36.06kB done
+[2026-11-24T16:16:16.750Z] #4 DONE 0.0s
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #6 [test 2/5] COPY pyproject.toml ./
+[2026-11-24T16:16:16.750Z] #6 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #7 [deps 3/3] RUN --mount=type=cache,target=/root/.cache poetry install --only main --no-root
+[2026-11-24T16:16:16.750Z] #7 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #8 [app 3/4] COPY migrations ./migrations
+[2026-11-24T16:16:16.750Z] #8 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #9 [deps 2/3] COPY pyproject.toml poetry.lock ./
+[2026-11-24T16:16:16.750Z] #9 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #10 [test 1/5] COPY --from=test-deps /opt/venv /opt/venv
+[2026-11-24T16:16:16.750Z] #10 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #11 [app 4/4] COPY app ./app
+[2026-11-24T16:16:16.750Z] #11 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #12 [test 3/5] COPY tests ./tests
+[2026-11-24T16:16:16.750Z] #12 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #13 [app 2/4] COPY alembic.ini ./
+[2026-11-24T16:16:16.750Z] #13 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #14 [test-deps 1/1] RUN --mount=type=cache,target=/root/.cache poetry install --no-root
+[2026-11-24T16:16:16.750Z] #14 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #15 [base 2/2] WORKDIR /srv/backend
+[2026-11-24T16:16:16.750Z] #15 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #16 [app 1/4] RUN addgroup --system --gid 10001 app     && adduser --system --uid 10001 --ingroup app app
+[2026-11-24T16:16:16.750Z] #16 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #17 [deps 1/3] RUN --mount=type=cache,target=/root/.cache pip install poetry==2.5.1 && python -m venv /opt/venv
+[2026-11-24T16:16:16.750Z] #17 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #18 [test 4/5] COPY smoke ./smoke
+[2026-11-24T16:16:16.750Z] #18 CACHED
+[2026-11-24T16:16:16.750Z] 
+[2026-11-24T16:16:16.750Z] #19 [test 5/5] RUN mkdir /reports && chown -R app:app /reports /srv/backend
+[2026-11-24T16:16:16.750Z] #19 DONE 0.3s
+[2026-11-24T16:16:17.000Z] 
+[2026-11-24T16:16:17.000Z] #20 exporting to image
+[2026-11-24T16:16:17.000Z] #20 exporting layers 0.0s done
+[2026-11-24T16:16:17.000Z] #20 exporting manifest sha256:e043caec4b7b99f2696e95271347daac8922822c715346d76bd27078a9916db4 done
+[2026-11-24T16:16:17.000Z] #20 exporting config sha256:3fc0306e3810fe294ca7233b0796ee0cfb7a1b933667a43b01d5247a35bcbd7d done
+[2026-11-24T16:16:17.000Z] #20 exporting attestation manifest sha256:d46e175dbe15dc1aac46eb0684d447c4100deda8324e11bc9b13b25ba8fb76ae done
+[2026-11-24T16:16:17.000Z] #20 exporting manifest list sha256:20e422ef1f045552d33a673cf31040747e2e16c65855a568ffba8e982275a769 done
+[2026-11-24T16:16:17.000Z] #20 naming to docker.io/library/fitpulse-api:1.1.0-b5-40f9bd2f-test done
+[2026-11-24T16:16:17.000Z] #20 unpacking to docker.io/library/fitpulse-api:1.1.0-b5-40f9bd2f-test
+[2026-11-24T16:16:17.552Z] #20 unpacking to docker.io/library/fitpulse-api:1.1.0-b5-40f9bd2f-test 0.7s done
+[2026-11-24T16:16:17.814Z] #20 DONE 0.8s
+[Pipeline] sh
+[2026-11-24T16:16:18.093Z] + docker build --build-arg APP_VERSION=1.1.0-b5-40f9bd2f -t fitpulse-api:1.1.0-b5-40f9bd2f backEnd
+[2026-11-24T16:16:18.347Z] #0 building with "default" instance using docker driver
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #1 [internal] load build definition from Dockerfile
+[2026-11-24T16:16:18.348Z] #1 transferring dockerfile: 1.91kB done
+[2026-11-24T16:16:18.348Z] #1 DONE 0.0s
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #2 [internal] load metadata for docker.io/library/python:3.14-slim
+[2026-11-24T16:16:18.348Z] #2 DONE 0.0s
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #3 [internal] load .dockerignore
+[2026-11-24T16:16:18.348Z] #3 transferring context: 121B done
+[2026-11-24T16:16:18.348Z] #3 DONE 0.0s
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #4 [base 1/2] FROM docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170
+[2026-11-24T16:16:18.348Z] #4 resolve docker.io/library/python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170 0.0s done
+[2026-11-24T16:16:18.348Z] #4 DONE 0.0s
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #5 [internal] load build context
+[2026-11-24T16:16:18.348Z] #5 transferring context: 1.20kB done
+[2026-11-24T16:16:18.348Z] #5 DONE 0.0s
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #6 [app 4/4] COPY app ./app
+[2026-11-24T16:16:18.348Z] #6 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #7 [deps 1/3] RUN --mount=type=cache,target=/root/.cache pip install poetry==2.5.1 && python -m venv /opt/venv
+[2026-11-24T16:16:18.348Z] #7 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #8 [app 3/4] COPY migrations ./migrations
+[2026-11-24T16:16:18.348Z] #8 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #9 [base 2/2] WORKDIR /srv/backend
+[2026-11-24T16:16:18.348Z] #9 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #10 [deps 2/3] COPY pyproject.toml poetry.lock ./
+[2026-11-24T16:16:18.348Z] #10 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #11 [app 1/4] RUN addgroup --system --gid 10001 app     && adduser --system --uid 10001 --ingroup app app
+[2026-11-24T16:16:18.348Z] #11 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #12 [app 2/4] COPY alembic.ini ./
+[2026-11-24T16:16:18.348Z] #12 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #13 [deps 3/3] RUN --mount=type=cache,target=/root/.cache poetry install --only main --no-root
+[2026-11-24T16:16:18.348Z] #13 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #14 [runtime 1/1] COPY --from=deps /opt/venv /opt/venv
+[2026-11-24T16:16:18.348Z] #14 CACHED
+[2026-11-24T16:16:18.348Z] 
+[2026-11-24T16:16:18.348Z] #15 exporting to image
+[2026-11-24T16:16:18.348Z] #15 exporting layers done
+[2026-11-24T16:16:18.348Z] #15 exporting manifest sha256:dd47092ec78e965820d89ef434aa75f05d8a2328c214edd772ad2a14329bd1bb done
+[2026-11-24T16:16:18.348Z] #15 exporting config sha256:9baafd50d1b66bc17182fc75e6a3ce947b337057e1c1e5db4d89157c68d0a168 done
+[2026-11-24T16:16:18.348Z] #15 exporting attestation manifest sha256:2837a8e2b0cdb37cc6cc8bab937951d2ee0c4de9602483c2a6447060b16ccffa done
+[2026-11-24T16:16:18.348Z] #15 exporting manifest list sha256:b8afba5c6a0e5a1c0d7c42dc5d1d6b94f98905843d9983f1412350e27e7a6ad2
+[2026-11-24T16:16:18.348Z] #15 exporting manifest list sha256:b8afba5c6a0e5a1c0d7c42dc5d1d6b94f98905843d9983f1412350e27e7a6ad2 done
+[2026-11-24T16:16:18.348Z] #15 naming to docker.io/library/fitpulse-api:1.1.0-b5-40f9bd2f done
+[2026-11-24T16:16:18.348Z] #15 unpacking to docker.io/library/fitpulse-api:1.1.0-b5-40f9bd2f done
+[2026-11-24T16:16:18.348Z] #15 DONE 0.0s
+[Pipeline] sh
+[2026-11-24T16:16:18.620Z] + docker build -t fitpulse-web:1.1.0-b5-40f9bd2f frontEnd
+[2026-11-24T16:16:18.871Z] #0 building with "default" instance using docker driver
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #1 [internal] load build definition from Dockerfile
+[2026-11-24T16:16:18.871Z] #1 transferring dockerfile: 353B 0.0s done
+[2026-11-24T16:16:18.871Z] #1 DONE 0.0s
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #2 [internal] load metadata for docker.io/library/nginx:alpine
+[2026-11-24T16:16:18.871Z] #2 DONE 0.0s
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #3 [internal] load metadata for docker.io/library/node:22-alpine
+[2026-11-24T16:16:18.871Z] #3 DONE 0.0s
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #4 [internal] load .dockerignore
+[2026-11-24T16:16:18.871Z] #4 transferring context: 90B done
+[2026-11-24T16:16:18.871Z] #4 DONE 0.0s
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #5 [stage-1 1/3] FROM docker.io/library/nginx:alpine@sha256:b50897d5c7b1aa08067c3d90c5e8b3e47ec4e3c91c91446f67820228f7b41e34
+[2026-11-24T16:16:18.871Z] #5 resolve docker.io/library/nginx:alpine@sha256:b50897d5c7b1aa08067c3d90c5e8b3e47ec4e3c91c91446f67820228f7b41e34 0.0s done
+[2026-11-24T16:16:18.871Z] #5 DONE 0.0s
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #6 [build 1/6] FROM docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+[2026-11-24T16:16:18.871Z] #6 resolve docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a 0.0s done
+[2026-11-24T16:16:18.871Z] #6 DONE 0.0s
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #7 [internal] load build context
+[2026-11-24T16:16:18.871Z] #7 transferring context: 284B done
+[2026-11-24T16:16:18.871Z] #7 DONE 0.0s
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #8 [build 6/6] RUN npm run build
+[2026-11-24T16:16:18.871Z] #8 CACHED
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #9 [build 4/6] RUN npm ci
+[2026-11-24T16:16:18.871Z] #9 CACHED
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #10 [stage-1 2/3] COPY nginx.conf /etc/nginx/conf.d/default.conf
+[2026-11-24T16:16:18.871Z] #10 CACHED
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #11 [build 2/6] WORKDIR /app
+[2026-11-24T16:16:18.871Z] #11 CACHED
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #12 [build 5/6] COPY . .
+[2026-11-24T16:16:18.871Z] #12 CACHED
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #13 [build 3/6] COPY package.json package-lock.json ./
+[2026-11-24T16:16:18.871Z] #13 CACHED
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #14 [stage-1 3/3] COPY --from=build /app/dist /usr/share/nginx/html
+[2026-11-24T16:16:18.871Z] #14 CACHED
+[2026-11-24T16:16:18.871Z] 
+[2026-11-24T16:16:18.871Z] #15 exporting to image
+[2026-11-24T16:16:18.871Z] #15 exporting layers done
+[2026-11-24T16:16:18.871Z] #15 exporting manifest sha256:1264ed052693a2cf2d8da95cae4b415ae22913dd3f3cf0e2bbc615265cb46972 done
+[2026-11-24T16:16:18.871Z] #15 exporting config sha256:065598f29f9f253602e1e11928ae537077f9ed9c8981dc3e578bdce8a721621a done
+[2026-11-24T16:16:18.871Z] #15 exporting attestation manifest sha256:23499e48e9dce588015ee2e3a994addde9ca1d12e8d196ad4dc10a2799ce71a2 done
+[2026-11-24T16:16:18.871Z] #15 exporting manifest list sha256:8d8e4ef792771dc9ac8d7e09a90cfe0cc4d8a861ea8966563e56e387a570d4da
+[2026-11-24T16:16:18.871Z] #15 exporting manifest list sha256:8d8e4ef792771dc9ac8d7e09a90cfe0cc4d8a861ea8966563e56e387a570d4da done
+[2026-11-24T16:16:18.871Z] #15 naming to docker.io/library/fitpulse-web:1.1.0-b5-40f9bd2f done
+[2026-11-24T16:16:18.871Z] #15 unpacking to docker.io/library/fitpulse-web:1.1.0-b5-40f9bd2f done
+[2026-11-24T16:16:18.871Z] #15 DONE 0.0s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Pytest in container)
+[Pipeline] sh
+[2026-11-24T16:16:19.262Z] + name=fitpulse-test-5
+[2026-11-24T16:16:19.262Z] + docker rm -f fitpulse-test-5
+[2026-11-24T16:16:19.262Z] + rc=0
+[2026-11-24T16:16:19.262Z] + docker run --name fitpulse-test-5 fitpulse-api:1.1.0-b5-40f9bd2f-test
+[2026-11-24T16:16:36.912Z] .........................................................                [100%]
+[2026-11-24T16:16:36.912Z] =============================== warnings summary ===============================
+[2026-11-24T16:16:36.912Z] ../../opt/venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+[2026-11-24T16:16:36.912Z]   /opt/venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+[2026-11-24T16:16:36.912Z]     from starlette.testclient import TestClient as TestClient  # noqa
+[2026-11-24T16:16:36.912Z] 
+[2026-11-24T16:16:36.912Z] -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[2026-11-24T16:16:36.912Z] ================================ tests coverage ================================
+[2026-11-24T16:16:36.912Z] _______________ coverage: platform linux, python 3.14.8-final-0 ________________
+[2026-11-24T16:16:36.912Z] 
+[2026-11-24T16:16:36.912Z] Name                            Stmts   Miss Branch BrPart  Cover
+[2026-11-24T16:16:36.912Z] -----------------------------------------------------------------
+[2026-11-24T16:16:36.912Z] app/__init__.py                     0      0      0      0   100%
+[2026-11-24T16:16:36.912Z] app/api/__init__.py                 0      0      0      0   100%
+[2026-11-24T16:16:36.913Z] app/api/deps.py                    45      3     14      3    90%
+[2026-11-24T16:16:36.913Z] app/api/routes/auth.py             34      3      4      0    92%
+[2026-11-24T16:16:36.913Z] app/api/routes/checkins.py         75      7     18      4    88%
+[2026-11-24T16:16:36.913Z] app/api/routes/health.py           19      0      0      0   100%
+[2026-11-24T16:16:36.913Z] app/api/routes/memberships.py      70      6     30      6    88%
+[2026-11-24T16:16:36.913Z] app/api/routes/users.py             8      0      0      0   100%
+[2026-11-24T16:16:36.913Z] app/cli.py                         97      1     30      2    98%
+[2026-11-24T16:16:36.913Z] app/core/__init__.py                0      0      0      0   100%
+[2026-11-24T16:16:36.913Z] app/core/clock.py                   7      0      0      0   100%
+[2026-11-24T16:16:36.913Z] app/core/config.py                 35      0      8      1    98%
+[2026-11-24T16:16:36.913Z] app/core/database.py               21      7      2      1    65%
+[2026-11-24T16:16:36.913Z] app/core/security.py               50      1      6      1    96%
+[2026-11-24T16:16:36.913Z] app/main.py                        25      0      0      0   100%
+[2026-11-24T16:16:36.913Z] app/models.py                      52      0      0      0   100%
+[2026-11-24T16:16:36.913Z] app/schemas.py                     47      2      4      2    92%
+[2026-11-24T16:16:36.913Z] -----------------------------------------------------------------
+[2026-11-24T16:16:36.913Z] TOTAL                             585     30    116     20    93%
+[2026-11-24T16:16:36.913Z] Coverage XML written to file /reports/coverage.xml
+[2026-11-24T16:16:36.913Z] 57 passed, 1 warning in 14.68s
+[2026-11-24T16:16:37.468Z] + docker cp fitpulse-test-5:/reports/. reports/
+[2026-11-24T16:16:37.469Z] + docker rm -f fitpulse-test-5
+[2026-11-24T16:16:37.722Z] + exit 0
+Post stage
+[Pipeline] junit
+[2026-11-24T16:16:37.825Z] Recording test results
+[2026-11-24T16:16:37.860Z] [Checks API] No suitable checks publisher found.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (SonarQube quality gate)
+[Pipeline] withCredentials
+[2026-11-24T16:16:38.013Z] Masking supported pattern matches of $SONAR_TOKEN
+[Pipeline] {
+[Pipeline] sh
+[2026-11-24T16:16:38.287Z] + sed -i s#<source>.*</source>#<source>/usr/src/backEnd/app</source># reports/coverage.xml
+[2026-11-24T16:16:38.287Z] + docker create --network fitpulse-ci -e SONAR_HOST_URL -e SONAR_TOKEN sonarsource/sonar-scanner-cli:latest -Dsonar.projectVersion=1.1.0 -Dsonar.working.directory=/tmp/.scannerwork -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=600
+[2026-11-24T16:16:38.287Z] WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+[2026-11-24T16:16:38.287Z] + c=4d8c42af9abe212047f7ce035aa89c5d4dbffde1d305241355edcfefb9a2e434
+[2026-11-24T16:16:38.287Z] + trap docker rm -f "$c" >/dev/null EXIT
+[2026-11-24T16:16:38.288Z] + docker cp . 4d8c42af9abe212047f7ce035aa89c5d4dbffde1d305241355edcfefb9a2e434:/usr/src
+[2026-11-24T16:16:38.843Z] + docker start -a 4d8c42af9abe212047f7ce035aa89c5d4dbffde1d305241355edcfefb9a2e434
+[2026-11-24T16:16:40.711Z] 16:16:40.422 WARN  Property 'sonar.working.directory' with value '/tmp/.scannerwork' is overridden with value '/tmp/.scannerwork'
+[2026-11-24T16:16:40.712Z] 16:16:40.433 INFO  Scanner configuration file: /opt/sonar-scanner/conf/sonar-scanner.properties
+[2026-11-24T16:16:40.712Z] 16:16:40.435 INFO  Project root configuration file: /usr/src/sonar-project.properties
+[2026-11-24T16:16:40.712Z] 16:16:40.478 INFO  SonarScanner CLI 8.5.0.16571
+[2026-11-24T16:16:40.712Z] 16:16:40.516 INFO  Linux 7.0.14-linuxkit amd64
+[2026-11-24T16:16:43.202Z] 16:16:43.087 INFO  Communicating with SonarQube Community Build 26.11.0.134175
+[2026-11-24T16:16:43.202Z] 16:16:43.091 INFO  JRE provisioning: os[linux], arch[x86_64]
+[2026-11-24T16:16:48.413Z] 16:16:48.205 INFO  Starting SonarScanner Engine...
+[2026-11-24T16:16:48.414Z] 16:16:48.207 INFO  Java 21.0.13 Eclipse Adoptium (64-bit)
+[2026-11-24T16:16:50.909Z] 16:16:50.738 INFO  Load global settings
+[2026-11-24T16:16:51.162Z] 16:16:51.065 INFO  Load global settings (done) | time=330ms
+[2026-11-24T16:16:51.162Z] 16:16:51.070 INFO  Server id: 147B411E-AaIOPY9nyOGrqzWwNBKD
+[2026-11-24T16:16:52.516Z] 16:16:52.287 INFO  Loading required plugins
+[2026-11-24T16:16:52.517Z] 16:16:52.291 INFO  Load plugins index
+[2026-11-24T16:16:52.517Z] 16:16:52.424 INFO  Load plugins index (done) | time=128ms
+[2026-11-24T16:16:52.517Z] 16:16:52.426 INFO  Load/download plugins
+[2026-11-24T16:16:53.432Z] 16:16:53.148 INFO  Load/download plugins (done) | time=717ms
+[2026-11-24T16:16:53.985Z] 16:16:53.876 INFO  Load project settings for component key: 'fitpulse'
+[2026-11-24T16:16:53.985Z] 16:16:53.950 INFO  Load project settings for component key: 'fitpulse' (done) | time=74ms
+[2026-11-24T16:16:54.237Z] 16:16:53.989 INFO  Process project properties
+[2026-11-24T16:16:54.237Z] 16:16:54.017 INFO  Process project properties (done) | time=29ms
+[2026-11-24T16:16:54.237Z] 16:16:54.038 INFO  Project key: fitpulse
+[2026-11-24T16:16:54.237Z] 16:16:54.039 INFO  Base dir: /usr/src
+[2026-11-24T16:16:54.237Z] 16:16:54.039 INFO  Working dir: /tmp/.scannerwork
+[2026-11-24T16:16:54.497Z] 16:16:54.397 INFO  Load quality profiles
+[2026-11-24T16:16:54.748Z] 16:16:54.536 INFO  Load quality profiles (done) | time=139ms
+[2026-11-24T16:16:54.748Z] 16:16:54.613 INFO  Load active rules
+[2026-11-24T16:16:55.301Z] 16:16:55.241 INFO  Load active rules (done) | time=624ms
+[2026-11-24T16:16:55.301Z] 16:16:55.279 INFO  Load analysis cache
+[2026-11-24T16:16:55.552Z] 16:16:55.329 INFO  Load analysis cache | time=50ms
+[2026-11-24T16:16:56.110Z] 16:16:55.871 INFO  Preprocessing files...
+[2026-11-24T16:16:56.110Z] 16:16:55.980 INFO  3 languages detected in 31 preprocessed files (done) | time=109ms
+[2026-11-24T16:16:56.110Z] 16:16:55.990 INFO  Loading plugins for detected languages
+[2026-11-24T16:16:56.110Z] 16:16:55.992 INFO  Load/download plugins
+[2026-11-24T16:16:57.981Z] 16:16:57.629 INFO  Load/download plugins (done) | time=1628ms
+[2026-11-24T16:16:58.534Z] 16:16:58.295 INFO  Load project repositories
+[2026-11-24T16:16:58.787Z] 16:16:58.662 INFO  Load project repositories (done) | time=364ms
+[2026-11-24T16:16:59.039Z] 16:16:58.914 INFO  Indexing files...
+[2026-11-24T16:16:59.039Z] 16:16:58.915 INFO  Project configuration:
+[2026-11-24T16:16:59.039Z] 16:16:58.925 INFO    Excluded sources for coverage: frontEnd/**
+[2026-11-24T16:16:59.039Z] 16:16:59.006 INFO  31 files indexed (done) | time=89ms
+[2026-11-24T16:16:59.039Z] 16:16:59.014 INFO  Quality profile for css: Sonar way core
+[2026-11-24T16:16:59.039Z] 16:16:59.016 INFO  Quality profile for js: Sonar way core
+[2026-11-24T16:16:59.039Z] 16:16:59.017 INFO  Quality profile for py: Sonar way core
+[2026-11-24T16:16:59.039Z] 16:16:59.017 INFO  ------------- Run sensors on module FitPulse
+[2026-11-24T16:16:59.291Z] 16:16:59.284 INFO  Load metrics repository
+[2026-11-24T16:16:59.542Z] 16:16:59.439 INFO  Load metrics repository (done) | time=154ms
+[2026-11-24T16:17:01.415Z] 16:17:01.075 INFO  Reflections took 230 ms to scan 1 urls, producing 30 keys and 313 values
+[2026-11-24T16:17:01.415Z] 16:17:01.348 INFO  Sensor IaC YAML File Type Classification Sensor [iac]
+[2026-11-24T16:17:01.415Z] 16:17:01.358 INFO  Sensor IaC YAML File Type Classification Sensor [iac] (done) | time=13ms
+[2026-11-24T16:17:01.415Z] 16:17:01.358 INFO  Sensor IaC hadolint report Sensor [iac]
+[2026-11-24T16:17:01.415Z] 16:17:01.360 INFO  Sensor IaC hadolint report Sensor [iac] (done) | time=1ms
+[2026-11-24T16:17:01.415Z] 16:17:01.362 INFO  Sensor Java Config Sensor [iac]
+[2026-11-24T16:17:01.415Z] 16:17:01.364 INFO  There are no files to be analyzed for the Java language
+[2026-11-24T16:17:01.415Z] 16:17:01.365 INFO  Sensor Java Config Sensor [iac] (done) | time=2ms
+[2026-11-24T16:17:01.415Z] 16:17:01.367 INFO  Sensor IaC Docker Sensor [iac]
+[2026-11-24T16:17:01.415Z] 16:17:01.380 INFO  There are no files to be analyzed for the Docker language
+[2026-11-24T16:17:01.415Z] 16:17:01.383 INFO  Sensor IaC Docker Sensor [iac] (done) | time=12ms
+[2026-11-24T16:17:01.415Z] 16:17:01.383 INFO  Sensor Python Sensor [python]
+[2026-11-24T16:17:02.769Z] 16:17:02.658 INFO  Starting global symbols computation
+[2026-11-24T16:17:02.769Z] 16:17:02.665 INFO  29 source files to be analyzed
+[2026-11-24T16:17:10.799Z] 16:17:09.525 INFO  29/29 source files have been analyzed
+[2026-11-24T16:17:10.800Z] 16:17:09.533 INFO  Finished step global symbols computation in 6861ms
+[2026-11-24T16:17:10.800Z] 16:17:09.680 INFO  Starting rules execution
+[2026-11-24T16:17:10.800Z] 16:17:09.683 INFO  29 source files to be analyzed
+[2026-11-24T16:17:17.289Z] 16:17:16.145 INFO  29/29 source files have been analyzed
+[2026-11-24T16:17:17.290Z] 16:17:16.148 INFO  Finished step rules execution in 6462ms
+[2026-11-24T16:17:17.290Z] 16:17:16.150 INFO  The Python analyzer was able to leverage cached data from previous analyses for 0 out of 29 files. These files were not parsed.
+[2026-11-24T16:17:17.290Z] 16:17:16.165 INFO  Sensor Python Sensor [python] (done) | time=14787ms
+[2026-11-24T16:17:17.290Z] 16:17:16.167 INFO  Sensor Cobertura Sensor for Python coverage [python]
+[2026-11-24T16:17:17.290Z] 16:17:16.196 INFO  Python test coverage
+[2026-11-24T16:17:17.290Z] 16:17:16.207 INFO  Parsing report '/usr/src/reports/coverage.xml'
+[2026-11-24T16:17:17.290Z] 16:17:16.390 INFO  Sensor Cobertura Sensor for Python coverage [python] (done) | time=226ms
+[2026-11-24T16:17:17.290Z] 16:17:16.391 INFO  Sensor PythonXUnitSensor [python]
+[2026-11-24T16:17:17.290Z] 16:17:16.416 INFO  Processing report '/usr/src/reports/junit.xml'
+[2026-11-24T16:17:17.290Z] 16:17:16.423 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.423 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.424 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.424 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.424 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.424 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.425 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.425 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.425 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.429 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.429 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.430 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.431 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.432 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.432 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.432 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.432 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.432 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.433 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.433 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.437 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.439 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.441 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.442 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.444 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.444 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.444 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.445 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.448 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.450 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.452 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.290Z] 16:17:16.455 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.455 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.456 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.457 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.458 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.458 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.458 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.458 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.458 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.459 WARN  The resource for 'tests.test_migrations' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.459 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.460 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.461 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.461 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.461 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.461 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.462 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.462 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.462 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.463 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.463 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.463 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.463 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.464 WARN  The resource for 'tests.test_version' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.464 WARN  The resource for 'tests.test_version' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.465 WARN  The resource for 'tests.test_version' is not found, drilling down to the details of this test won't be possible
+[2026-11-24T16:17:17.291Z] 16:17:16.470 INFO  Sensor PythonXUnitSensor [python] (done) | time=45ms
+[2026-11-24T16:17:17.291Z] 16:17:16.480 INFO  Sensor Python Dependency Sensor [python]
+[2026-11-24T16:17:17.291Z] 16:17:16.485 INFO  Sensor Python Dependency Sensor [python] (done) | time=19ms
+[2026-11-24T16:17:17.291Z] 16:17:16.485 INFO  Sensor HTML [web]
+[2026-11-24T16:17:17.291Z] 16:17:16.506 INFO  Sensor HTML [web] (done) | time=40ms
+[2026-11-24T16:17:17.291Z] 16:17:16.506 INFO  Sensor TextAndSecretsSensor [text]
+[2026-11-24T16:17:17.291Z] 16:17:16.611 INFO  Available processors: 8
+[2026-11-24T16:17:17.291Z] 16:17:16.612 INFO  Using 8 threads for analysis.
+[2026-11-24T16:17:17.549Z] 16:17:17.319 INFO  Start fetching files for the text and secrets analysis
+[2026-11-24T16:17:17.549Z] 16:17:17.404 INFO  Using Git CLI to retrieve dirty files
+[2026-11-24T16:17:17.549Z] 16:17:17.520 INFO  Retrieving language associated files and files included via "sonar.text.inclusions" that are tracked by git
+[2026-11-24T16:17:17.549Z] 16:17:17.521 INFO  Starting the text and secrets analysis
+[2026-11-24T16:17:17.549Z] 16:17:17.527 INFO  31 source files to be analyzed for the text and secrets analysis
+[2026-11-24T16:17:18.101Z] 16:17:17.984 INFO  31/31 source files have been analyzed for the text and secrets analysis
+[2026-11-24T16:17:18.101Z] 16:17:17.993 INFO  Sensor TextAndSecretsSensor [text] (done) | time=1487ms
+[2026-11-24T16:17:18.101Z] 16:17:18.014 INFO  ------------- Run sensors on project
+[2026-11-24T16:17:19.016Z] 16:17:18.904 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript]
+[2026-11-24T16:17:19.569Z] 16:17:19.408 INFO  Detected os: Linux arch: amd64 alpine: false. Platform: LINUX_X64
+[2026-11-24T16:17:19.569Z] 16:17:19.415 INFO  Deploy location /opt/sonar-scanner/.sonar/js/node-runtime, tagetRuntime: /opt/sonar-scanner/.sonar/js/node-runtime/node,  version: /opt/sonar-scanner/.sonar/js/node-runtime/version.txt
+[2026-11-24T16:17:23.722Z] 16:17:23.684 INFO  Using embedded Node.js runtime.
+[2026-11-24T16:17:23.722Z] 16:17:23.695 INFO  Using Node.js executable: '/opt/sonar-scanner/.sonar/js/node-runtime/node'.
+[2026-11-24T16:17:27.868Z] 16:17:27.816 INFO  Memory configuration: OS (3916 MB), Node.js (2150 MB).
+[2026-11-24T16:17:28.140Z] 16:17:27.872 INFO  gRPC analyze-project server listening on 127.0.0.1:38191
+[2026-11-24T16:17:30.016Z] 16:17:29.748 INFO  Plugin version: [14.3.0.46350]
+[2026-11-24T16:17:36.548Z] 16:17:35.484 INFO  Found 0 tsconfig.json file(s): []
+[2026-11-24T16:17:36.577Z] 16:17:35.736 INFO  1 source file to be analyzed
+[2026-11-24T16:17:36.578Z] 16:17:35.743 INFO  Analyzing 1 file(s) using default options [lib: lib.esnext.d.ts, lib.dom.d.ts]
+[2026-11-24T16:17:36.578Z] 16:17:35.748 INFO  1/1 source file has been analyzed
+[2026-11-24T16:17:36.578Z] 16:17:36.245 INFO  Hit the cache for 0 out of 1
+[2026-11-24T16:17:36.578Z] 16:17:36.248 INFO  Miss the cache for 1 out of 1: ANALYSIS_MODE_INELIGIBLE [1/1]
+[2026-11-24T16:17:36.578Z] 16:17:36.248 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript] (done) | time=17351ms
+[2026-11-24T16:17:36.578Z] 16:17:36.254 INFO  Sensor IaC Project Sensor [iac]
+[2026-11-24T16:17:36.578Z] 16:17:36.283 INFO  Sensor IaC Project Sensor [iac] (done) | time=32ms
+[2026-11-24T16:17:36.578Z] 16:17:36.286 INFO  Sensor Zero Coverage Sensor
+[2026-11-24T16:17:36.578Z] 16:17:36.289 INFO  Sensor Zero Coverage Sensor (done) | time=6ms
+[2026-11-24T16:17:36.578Z] 16:17:36.290 INFO  ------------- Gather SCA dependencies on project
+[2026-11-24T16:17:36.578Z] 16:17:36.386 INFO  Dependency analysis skipped
+[2026-11-24T16:17:36.578Z] 16:17:36.394 INFO  SCM Publisher is disabled
+[2026-11-24T16:17:36.578Z] 16:17:36.435 INFO  CPD Executor 5 files had no CPD blocks
+[2026-11-24T16:17:36.578Z] 16:17:36.440 INFO  CPD Executor Calculating CPD for 13 files
+[2026-11-24T16:17:36.578Z] 16:17:36.480 INFO  CPD Executor CPD calculation finished (done) | time=43ms
+[2026-11-24T16:17:39.102Z] 16:17:38.684 INFO  Analysis report generated in 2128ms, dir size=402.5 kB
+[2026-11-24T16:17:39.103Z] 16:17:38.793 INFO  Analysis report compressed in 116ms, zip size=178.9 kB
+[2026-11-24T16:17:40.024Z] 16:17:39.708 INFO  Analysis report uploaded in 891ms
+[2026-11-24T16:17:40.024Z] 16:17:39.723 INFO  ------------- Check Quality Gate status
+[2026-11-24T16:17:40.024Z] 16:17:39.730 INFO  Waiting for the analysis report to be processed (max 600s)
+[2026-11-24T16:17:58.047Z] 16:17:56.028 INFO  QUALITY GATE STATUS: PASSED - View details on http://sonarqube:9000/dashboard?id=fitpulse
+[2026-11-24T16:17:58.048Z] 16:17:57.397 INFO  Analysis total time: 1:09.068 min
+[2026-11-24T16:17:58.048Z] 16:17:57.420 INFO  SonarScanner Engine completed successfully
+[2026-11-24T16:17:58.048Z] 16:17:57.590 INFO  EXECUTION SUCCESS
+[2026-11-24T16:17:58.048Z] 16:17:57.683 INFO  Total time: 1:17.165s
+[2026-11-24T16:17:58.614Z] + docker rm -f 4d8c42af9abe212047f7ce035aa89c5d4dbffde1d305241355edcfefb9a2e434
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Package artifacts)
+[Pipeline] sh
+[2026-11-24T16:18:00.018Z] + git archive --format=tar.gz -o dist-artifacts/fitpulse-1.1.0-b5-40f9bd2f.tar.gz HEAD
+[2026-11-24T16:18:00.021Z] + bash -c . scripts/k8s/lib.sh
+[2026-11-24T16:18:00.021Z]                         for s in rolling blue-green canary shadow ab-testing frontend; do
+[2026-11-24T16:18:00.021Z]                             render "k8s/$s" "$RELEASE" > "dist-artifacts/$s-$RELEASE.yaml"
+[2026-11-24T16:18:00.021Z]                         done
+[2026-11-24T16:18:00.587Z] + docker image inspect fitpulse-api:1.1.0-b5-40f9bd2f fitpulse-web:1.1.0-b5-40f9bd2f --format {{index .RepoTags 0}} {{.Id}}
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push to Docker Hub)
+Stage "Push to Docker Hub" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Load into Minikube)
+Stage "Load into Minikube" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy)
+Stage "Deploy" skipped due to when conditional
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] archiveArtifacts
+[2026-11-24T16:18:01.583Z] Archiving artifacts
+[2026-11-24T16:18:01.604Z] Recording fingerprints
+[Pipeline] sh
+[2026-11-24T16:18:02.078Z] + docker image rm fitpulse-api:1.1.0-b5-40f9bd2f-test
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
