@@ -1,6 +1,6 @@
 [project]
 name = "fitpulse-backend"
-version = "1.1.0"
+version = "1.1.1"
 description = "Backend API and core service engine for the Fitness Membership Application, handling user authentication, digital QR check-ins, and subscription tiers"
 authors = [
     {name = "Atharva Kadam"}

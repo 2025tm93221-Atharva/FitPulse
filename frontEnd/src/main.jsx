@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import './styles.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+// An empty VITE_API_BASE_URL is valid: it means the API is on the same origin.
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000';
 
 async function apiFetch(path, options = {}, accessToken = null) {
   const headers = new Headers(options.headers || {});
