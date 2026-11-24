@@ -1,0 +1,184 @@
+15:52:17.631 WARN  Property 'sonar.working.directory' with value '/tmp/.scannerwork' is overridden with value '/tmp/.scannerwork'
+15:52:17.644 INFO  Scanner configuration file: /opt/sonar-scanner/conf/sonar-scanner.properties
+15:52:17.648 INFO  Project root configuration file: /usr/src/sonar-project.properties
+15:52:17.694 INFO  SonarScanner CLI 8.5.0.16571
+15:52:17.736 INFO  Linux 7.0.14-linuxkit amd64
+15:52:20.722 INFO  Communicating with SonarQube Community Build 26.11.0.134175
+15:52:20.726 INFO  JRE provisioning: os[linux], arch[x86_64]
+15:52:27.915 INFO  Starting SonarScanner Engine...
+15:52:27.917 INFO  Java 21.0.13 Eclipse Adoptium (64-bit)
+15:52:30.106 INFO  Load global settings
+15:52:30.504 INFO  Load global settings (done) | time=399ms
+15:52:30.513 INFO  Server id: 147B411E-AaIOPY9nyOGrqzWwNBKD
+15:52:31.446 INFO  Loading required plugins
+15:52:31.452 INFO  Load plugins index
+15:52:32.097 INFO  Load plugins index (done) | time=638ms
+15:52:32.102 INFO  Load/download plugins
+15:52:32.925 INFO  Load/download plugins (done) | time=816ms
+15:52:33.888 INFO  Load project settings for component key: 'fitpulse'
+15:52:33.968 INFO  Failed to load settings with NOT_FOUND error, which can happen if the project does not exist yet
+15:52:34.000 INFO  Process project properties
+15:52:34.032 INFO  Process project properties (done) | time=33ms
+15:52:34.064 INFO  Project key: fitpulse
+15:52:34.064 INFO  Base dir: /usr/src
+15:52:34.065 INFO  Working dir: /tmp/.scannerwork
+15:52:34.186 INFO  Load quality profiles
+15:52:34.813 INFO  Load quality profiles (done) | time=627ms
+15:52:34.901 WARN  SCM provider autodetection failed. Please use "sonar.scm.provider" to define SCM of your project, or disable the SCM Sensor in the project settings.
+15:52:34.942 INFO  Load active rules
+15:52:35.690 INFO  Load active rules (done) | time=747ms
+15:52:35.743 INFO  Load analysis cache
+15:52:35.765 INFO  Load analysis cache (404) | time=20ms
+15:52:36.130 INFO  Preprocessing files...
+15:52:36.304 INFO  3 languages detected in 31 preprocessed files (done) | time=170ms
+15:52:36.319 INFO  Loading plugins for detected languages
+15:52:36.320 INFO  Load/download plugins
+15:52:38.051 INFO  Load/download plugins (done) | time=1727ms
+15:52:38.703 INFO  Load project repositories
+15:52:38.765 INFO  Load project repositories (done) | time=67ms
+15:52:38.862 INFO  Indexing files...
+15:52:38.864 INFO  Project configuration:
+15:52:38.866 INFO    Excluded sources for coverage: frontEnd/**
+15:52:38.898 INFO  31 files indexed (done) | time=35ms
+15:52:38.904 INFO  Quality profile for css: Sonar way core
+15:52:38.904 INFO  Quality profile for js: Sonar way core
+15:52:38.904 INFO  Quality profile for py: Sonar way core
+15:52:38.905 INFO  ------------- Run sensors on module FitPulse
+15:52:39.108 INFO  Load metrics repository
+15:52:39.238 INFO  Load metrics repository (done) | time=129ms
+15:52:40.863 INFO  Reflections took 190 ms to scan 1 urls, producing 30 keys and 313 values
+15:52:41.017 INFO  Sensor IaC YAML File Type Classification Sensor [iac]
+15:52:41.029 INFO  Sensor IaC YAML File Type Classification Sensor [iac] (done) | time=11ms
+15:52:41.030 INFO  Sensor IaC hadolint report Sensor [iac]
+15:52:41.030 INFO  Sensor IaC hadolint report Sensor [iac] (done) | time=1ms
+15:52:41.030 INFO  Sensor Java Config Sensor [iac]
+15:52:41.032 INFO  There are no files to be analyzed for the Java language
+15:52:41.032 INFO  Sensor Java Config Sensor [iac] (done) | time=1ms
+15:52:41.038 INFO  Sensor IaC Docker Sensor [iac]
+15:52:41.047 INFO  There are no files to be analyzed for the Docker language
+15:52:41.048 INFO  Sensor IaC Docker Sensor [iac] (done) | time=13ms
+15:52:41.048 INFO  Sensor Python Sensor [python]
+15:52:42.117 INFO  Starting global symbols computation
+15:52:42.128 INFO  29 source files to be analyzed
+15:52:48.394 INFO  29/29 source files have been analyzed
+15:52:48.397 INFO  Finished step global symbols computation in 6270ms
+15:52:48.653 INFO  Starting rules execution
+15:52:48.659 INFO  29 source files to be analyzed
+15:52:53.905 INFO  29/29 source files have been analyzed
+15:52:53.909 INFO  Finished step rules execution in 5239ms
+15:52:53.913 INFO  The Python analyzer was able to leverage cached data from previous analyses for 0 out of 29 files. These files were not parsed.
+15:52:53.920 INFO  Sensor Python Sensor [python] (done) | time=12867ms
+15:52:53.921 INFO  Sensor Cobertura Sensor for Python coverage [python]
+15:52:53.950 INFO  Python test coverage
+15:52:53.961 INFO  Parsing report '/usr/src/reports/coverage.xml'
+15:52:54.120 INFO  Sensor Cobertura Sensor for Python coverage [python] (done) | time=204ms
+15:52:54.121 INFO  Sensor PythonXUnitSensor [python]
+15:52:54.139 INFO  Processing report '/usr/src/reports/junit.xml'
+15:52:54.145 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.146 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.147 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.148 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.149 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.157 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.159 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.159 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.160 WARN  The resource for 'tests.test_auth' is not found, drilling down to the details of this test won't be possible
+15:52:54.160 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.160 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.161 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.161 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.165 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.167 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.170 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.171 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.171 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.171 WARN  The resource for 'tests.test_checkins' is not found, drilling down to the details of this test won't be possible
+15:52:54.171 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+15:52:54.171 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+15:52:54.172 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+15:52:54.172 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+15:52:54.172 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+15:52:54.176 WARN  The resource for 'tests.test_cli' is not found, drilling down to the details of this test won't be possible
+15:52:54.179 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+15:52:54.180 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+15:52:54.181 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+15:52:54.182 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+15:52:54.182 WARN  The resource for 'tests.test_membership_summary' is not found, drilling down to the details of this test won't be possible
+15:52:54.182 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.183 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.184 WARN  The resource for 'tests.test_memberships' is not found, drilling down to the details of this test won't be possible
+15:52:54.184 WARN  The resource for 'tests.test_migrations' is not found, drilling down to the details of this test won't be possible
+15:52:54.184 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+15:52:54.185 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+15:52:54.186 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+15:52:54.186 WARN  The resource for 'tests.test_runtime_config' is not found, drilling down to the details of this test won't be possible
+15:52:54.187 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.188 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.188 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.189 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.189 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.190 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.191 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.192 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.193 WARN  The resource for 'tests.test_scanners' is not found, drilling down to the details of this test won't be possible
+15:52:54.194 WARN  The resource for 'tests.test_version' is not found, drilling down to the details of this test won't be possible
+15:52:54.194 WARN  The resource for 'tests.test_version' is not found, drilling down to the details of this test won't be possible
+15:52:54.206 WARN  The resource for 'tests.test_version' is not found, drilling down to the details of this test won't be possible
+15:52:54.207 INFO  Sensor PythonXUnitSensor [python] (done) | time=37ms
+15:52:54.216 INFO  Sensor Python Dependency Sensor [python]
+15:52:54.221 INFO  Sensor Python Dependency Sensor [python] (done) | time=8ms
+15:52:54.221 INFO  Sensor HTML [web]
+15:52:54.221 INFO  Sensor HTML [web] (done) | time=30ms
+15:52:54.221 INFO  Sensor TextAndSecretsSensor [text]
+15:52:54.305 INFO  Available processors: 8
+15:52:54.306 INFO  Using 8 threads for analysis.
+15:52:55.017 INFO  Start fetching files for the text and secrets analysis
+15:52:55.122 INFO  Using Git CLI to retrieve dirty files
+15:52:55.180 WARN  Retrieving only language associated files, make sure to run the analysis inside a git repository to make use of inclusions specified via "sonar.text.inclusions"
+15:52:55.182 INFO  Starting the text and secrets analysis
+15:52:55.186 INFO  31 source files to be analyzed for the text and secrets analysis
+15:52:55.433 INFO  31/31 source files have been analyzed for the text and secrets analysis
+15:52:55.441 INFO  Sensor TextAndSecretsSensor [text] (done) | time=1241ms
+15:52:55.460 INFO  ------------- Run sensors on project
+15:52:56.045 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript]
+15:52:56.639 INFO  Detected os: Linux arch: amd64 alpine: false. Platform: LINUX_X64
+15:52:56.641 INFO  Deploy location /opt/sonar-scanner/.sonar/js/node-runtime, tagetRuntime: /opt/sonar-scanner/.sonar/js/node-runtime/node,  version: /opt/sonar-scanner/.sonar/js/node-runtime/version.txt
+15:53:00.530 INFO  Using embedded Node.js runtime.
+15:53:00.537 INFO  Using Node.js executable: '/opt/sonar-scanner/.sonar/js/node-runtime/node'.
+15:53:04.608 INFO  Memory configuration: OS (3916 MB), Node.js (2150 MB).
+15:53:04.724 INFO  gRPC analyze-project server listening on 127.0.0.1:33709
+15:53:06.416 INFO  Plugin version: [14.3.0.46350]
+15:53:09.929 INFO  Found 0 tsconfig.json file(s): []
+15:53:18.551 INFO  1 source file to be analyzed
+15:53:18.558 INFO  Analyzing 1 file(s) using default options [lib: lib.esnext.d.ts, lib.dom.d.ts]
+15:53:18.564 INFO  1/1 source file has been analyzed
+15:53:19.396 INFO  Hit the cache for 0 out of 1
+15:53:19.410 INFO  Miss the cache for 1 out of 1: ANALYSIS_MODE_INELIGIBLE [1/1]
+15:53:19.413 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript] (done) | time=23351ms
+15:53:19.414 INFO  Sensor IaC Project Sensor [iac]
+15:53:19.464 INFO  Sensor IaC Project Sensor [iac] (done) | time=65ms
+15:53:19.466 INFO  Sensor Zero Coverage Sensor
+15:53:19.475 INFO  Sensor Zero Coverage Sensor (done) | time=11ms
+15:53:19.480 INFO  ------------- Gather SCA dependencies on project
+15:53:19.646 INFO  Dependency analysis skipped
+15:53:19.650 INFO  SCM Publisher No SCM system was detected. You can use the 'sonar.scm.provider' property to explicitly specify it.
+15:53:19.705 INFO  CPD Executor 5 files had no CPD blocks
+15:53:19.707 INFO  CPD Executor Calculating CPD for 13 files
+15:53:19.787 INFO  CPD Executor CPD calculation finished (done) | time=86ms
+15:53:20.572 INFO  Analysis report generated in 640ms, dir size=401.4 kB
+15:53:20.904 INFO  Analysis report compressed in 322ms, zip size=179.3 kB
+15:53:24.571 INFO  Analysis report uploaded in 3667ms
+15:53:24.616 INFO  ------------- Check Quality Gate status
+15:53:24.624 INFO  Waiting for the analysis report to be processed (max 400s)
+15:53:50.579 INFO  QUALITY GATE STATUS: PASSED - View details on http://sonarqube:9000/dashboard?id=fitpulse
+15:53:53.646 INFO  Analysis total time: 1:25.468 min
+15:53:54.188 INFO  SonarScanner Engine completed successfully
+15:53:54.450 INFO  EXECUTION SUCCESS
+15:53:54.567 INFO  Total time: 1:36.816s
