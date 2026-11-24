@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import auth, checkins, health, memberships, users
 from app.core.config import settings
 
-app = FastAPI(title=settings.app_name, version="0.3.0")
+app = FastAPI(title=settings.app_name, version=settings.app_version)
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,6 +29,9 @@ async def security_headers(request, call_next):
     response.headers.setdefault("X-Frame-Options", "DENY")
     response.headers.setdefault("Referrer-Policy", "no-referrer")
     response.headers.setdefault("Permissions-Policy", "camera=(self), microphone=(), geolocation=()")
+    # Lets operators and deployment scripts see which release served a request.
+    response.headers["X-App-Version"] = settings.app_version
+    response.headers["X-Deploy-Track"] = settings.deploy_track
     return response
 
 

@@ -36,3 +36,13 @@ node_modules/
 .idea/
 .DS_Store
 fitPulse.code-workspace
+
+# CI output
+reports/
+.scannerwork/
+coverage.xml
+dist-artifacts/
+ci/.env
+ci/.kube/
+ci/.empty/
+!ci/.env.example

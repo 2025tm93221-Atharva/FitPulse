@@ -10,6 +10,10 @@ _DEVELOPMENT_SECRET = "dev-only-change-this-secret-before-deployment-8f2c"
 class Settings(BaseSettings):
     app_name: str = "Fitness Membership API"
     environment: str = "development"
+    # Baked into the image at build time (Dockerfile ARG APP_VERSION).
+    app_version: str = "0.0.0-dev"
+    # Set per Deployment: stable, canary, blue, green, shadow, a or b.
+    deploy_track: str = "local"
     database_url: str = "sqlite:///./fitness.db"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     secret_key: str = _DEVELOPMENT_SECRET
