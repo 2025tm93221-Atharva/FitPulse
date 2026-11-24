@@ -1,0 +1,48 @@
+# Jenkins and SonarQube. Copy ci/.env.example to ci/.env first.
+name: fitpulse-ci
+services:
+  jenkins:
+    build: ./jenkins
+    restart: unless-stopped
+    ports: ["127.0.0.1:8090:8080"]
+    environment:
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:?run ci/setup.sh}
+      GIT_URL: ${GIT_URL}
+      GIT_BRANCH: ${GIT_BRANCH}
+      # Each integration is skipped by the Jenkinsfile while its variable is empty.
+      SONAR_HOST_URL: ${SONAR_HOST_URL:-}
+      SONAR_TOKEN: ${SONAR_TOKEN:-unset}
+      DOCKERHUB_USER: ${DOCKERHUB_USER:-}
+      DOCKERHUB_TOKEN: ${DOCKERHUB_TOKEN:-unset}
+      DEPLOY_STRATEGY: ${DEPLOY_STRATEGY:-none}
+      KUBECONFIG: /run/kube/config
+    # The Docker socket gives Jenkins root-equivalent access: keep this machine private.
+    group_add: ["0"]
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./.kube:/run/kube:ro
+      - ${GIT_MOUNT:-./.empty}:/srv/git:ro
+    networks: [ci, minikube]
+  sonarqube:
+    image: sonarqube:community
+    profiles: [sonar]
+    ports: ["127.0.0.1:9000:9000"]
+    environment:
+      SONAR_WEB_JAVAOPTS: -Xmx384m -Xms128m
+      SONAR_CE_JAVAOPTS: -Xmx512m -Xms128m
+      SONAR_SEARCH_JAVAOPTS: -Xmx512m -Xms512m
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_ext:/opt/sonarqube/extensions
+    networks: [ci]
+volumes:
+  jenkins_home:
+  sonar_data:
+  sonar_ext:
+networks:
+  ci:
+    name: fitpulse-ci
+  minikube:
+    external: true
