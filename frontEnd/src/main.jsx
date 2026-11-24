@@ -113,7 +113,7 @@ function App() {
     }
   }
 
-  useEffect(() => { checkApi(); }, []);
+  useEffect(() => { void checkApi(); }, []);
 
   async function loadDashboard(accessToken) {
     const [membershipData, checkInData] = await Promise.all([
