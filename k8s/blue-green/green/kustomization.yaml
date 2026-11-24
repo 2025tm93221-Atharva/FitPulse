@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: fitpulse
+nameSuffix: -bluegreen-green
+resources:
+  - ../../api-base
+labels:
+  - includeSelectors: true
+    pairs:
+      strategy: bluegreen
+      track: green
+replicas:
+  - name: api
+    count: 1

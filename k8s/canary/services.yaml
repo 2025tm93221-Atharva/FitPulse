@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-api-stable
+  labels:
+    strategy: canary
+spec:
+  type: ClusterIP
+  selector:
+    app: fitpulse-api
+    strategy: canary
+    track: stable
+  ports:
+    - port: 8000
+      targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: canary-api-canary
+  labels:
+    strategy: canary
+spec:
+  type: ClusterIP
+  selector:
+    app: fitpulse-api
+    strategy: canary
+    track: canary
+  ports:
+    - port: 8000
+      targetPort: http

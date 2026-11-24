@@ -1,0 +1,35 @@
+# The live Service is switched between colours by scripts/k8s/blue-green.sh.
+apiVersion: v1
+kind: Service
+metadata:
+  name: bluegreen-live
+  labels:
+    strategy: bluegreen
+spec:
+  type: NodePort
+  selector:
+    app: fitpulse-api
+    strategy: bluegreen
+    track: blue
+  ports:
+    - port: 8000
+      targetPort: http
+      nodePort: 30082
+---
+# Idle colour: smoke-tested here before it receives users.
+apiVersion: v1
+kind: Service
+metadata:
+  name: bluegreen-preview
+  labels:
+    strategy: bluegreen
+spec:
+  type: NodePort
+  selector:
+    app: fitpulse-api
+    strategy: bluegreen
+    track: green
+  ports:
+    - port: 8000
+      targetPort: http
+      nodePort: 30086

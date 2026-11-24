@@ -1,0 +1,6 @@
+# Shared API pod definition. Every deployment track is a small overlay of this.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: fitpulse
+resources:
+  - deployment.yaml

@@ -1,0 +1,34 @@
+# Template: scripts/k8s/lib.sh fills in JOB_NAME, DB_KEY and the image, then waits for completion.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: JOB_NAME
+  namespace: fitpulse
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: migrate
+          image: fitpulse-api:APP_VERSION
+          imagePullPolicy: IfNotPresent
+          command: [alembic, upgrade, head]
+          envFrom:
+            - configMapRef:
+                name: fitpulse-config
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef: {name: fitpulse-secrets, key: SECRET_KEY}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: fitpulse-secrets, key: DB_KEY}
+          resources:
+            requests: {cpu: 25m, memory: 64Mi}
+            limits: {memory: 192Mi, ephemeral-storage: 64Mi}

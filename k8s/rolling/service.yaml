@@ -1,0 +1,17 @@
+# "api" is also the upstream name the frontend image proxies to.
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  labels:
+    strategy: rolling
+spec:
+  type: NodePort
+  selector:
+    app: fitpulse-api
+    strategy: rolling
+    track: stable
+  ports:
+    - port: 8000
+      targetPort: http
+      nodePort: 30081
